@@ -662,12 +662,20 @@ footer p { margin: 4px 0; }
   <div class="card">
     <figure class="howto">
       <video src="media/howto.mp4" poster="media/howto.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストーラーを使っている動画 / Video of using the installer"></video>
-      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 4 までの流れ、約 50 秒）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 4 (about 50 seconds). The video skips the typing.</span></figcaption>
+      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ、約 1 分）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 5 (about a minute). The video skips the typing.</span></figcaption>
     </figure>
 
     <ol class="steps">
       <li class="step">
         <span class="num" aria-hidden="true">1</span>
+        <h3><span lang="ja">開発者モードをオンにする（最初の 1 回だけ）</span><span lang="en">Turn on Developer Mode (only the first time)</span></h3>
+        <div class="step-body">
+          <p><span lang="ja">画面の下のバーの <strong>Steam</strong> ボタン →［<strong>Steam設定</strong>］→ 左の［<strong>システム</strong>］を開いて、「<strong>開発者モードを有効化</strong>」をオンにします。これで Konsole が使えるようになります。</span><span lang="en">Press the <strong>Steam</strong> button on the bar at the bottom → <strong>Settings</strong> → <strong>System</strong> on the left, and turn on <strong>Enable Developer Mode</strong>. This makes Konsole available.</span></p>
+          <p class="hint"><span lang="ja">一度オンにすれば、次からはこの手順は要りません。</span><span lang="en">Once it is on, you can skip this step from then on.</span></p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="num" aria-hidden="true">2</span>
         <h3><span lang="ja">Konsole を開く</span><span lang="en">Open Konsole</span></h3>
         <div class="step-body">
           <p><span lang="ja">画面の下のバーにある <strong>＋</strong> を押すと「プログラムを起動」の一覧が出ます。その中の <strong>Konsole</strong> を選びます。デスクトップモードに切り替える必要はありません。</span><span lang="en">Press <strong>+</strong> on the bar at the bottom of your view to open the list of programs, then pick <strong>Konsole</strong>. No need to switch to Desktop Mode.</span></p>
@@ -676,7 +684,7 @@ footer p { margin: 4px 0; }
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">2</span>
+        <span class="num" aria-hidden="true">3</span>
         <h3><span lang="ja">コマンドを入力して Enter</span><span lang="en">Type the command and press Enter</span></h3>
         <div class="step-body">
           <p><span lang="ja">Konsole に、この 1 行を入力して <kbd>Enter</kbd> を押します。区切りごとの打ち方は、上の「<a href="#read">コマンドの読み方</a>」にあります。</span><span lang="en">Type this one line into Konsole and press <kbd>Enter</kbd>. See “<a href="#read">How to read the command</a>” above for each part.</span></p>
@@ -696,7 +704,7 @@ footer p { margin: 4px 0; }
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">3</span>
+        <span class="num" aria-hidden="true">4</span>
         <h3><span lang="ja">アプリの番号を打って Enter</span><span lang="en">Type the app's number and press Enter</span></h3>
         <div class="step-body">
           <p><span lang="ja">こんな一覧が出ます。インストールしたいアプリの番号を打って <kbd>Enter</kbd>。</span><span lang="en">A list like this appears. Type the number of the app you want to install and press <kbd>Enter</kbd>.</span></p>
@@ -763,7 +771,7 @@ Type what you want to do and press Enter
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">4</span>
+        <span class="num" aria-hidden="true">5</span>
         <h3><span lang="ja">質問に答えると、「結果」が出て終わり</span><span lang="en">Answer the questions, then the result appears</span></h3>
         <div class="step-body">
           <p><span lang="ja">アプリによっては質問が出ます。<code>y</code>（はい）か <code>n</code>（いいえ）を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけ押すと、かっこの中の「Enter だけなら」の答えになります。迷ったら <kbd>Enter</kbd> で大丈夫です。</span><span lang="en">Some apps ask a question. Type <code>y</code> (yes) or <code>n</code> (no) and press <kbd>Enter</kbd>. Pressing just <kbd>Enter</kbd> gives the answer shown after “Enter =” in the brackets. When unsure, just press <kbd>Enter</kbd>.</span></p>
@@ -897,6 +905,8 @@ Type what you want to do and press Enter
     <!-- 「」や “” で引用しているメッセージは i の文言（be24b95 時点）。i を変えたら合わせる。
          command not found は bash、curl: で始まるものは curl のメッセージ（i は出さない） -->
     <dl class="faq" lang="ja">
+      <dt>「プログラムを起動」の一覧に Konsole がない</dt>
+      <dd>開発者モードがオフになっています。手順 1 のとおり、Steam ボタン →［Steam設定］→［システム］の「開発者モードを有効化」をオンにしてください。</dd>
       <dt><code>command not found</code>（コマンドが見つかりません）などが出る・何も起きない</dt>
       <dd>
         入力したコマンドが少し違っているかもしれません。<kbd>↑</kbd> で呼び出して、次を確かめて直してから <kbd>Enter</kbd>。
@@ -931,6 +941,8 @@ Type what you want to do and press Enter
       <dd>質問の答えを待っています。<code>y</code> か <code>n</code> を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけなら、かっこの中の「Enter だけなら」の答えで進みます。</dd>
     </dl>
     <dl class="faq" lang="en">
+      <dt>Konsole is not in the list of programs</dt>
+      <dd>Developer Mode is off. As in step 1, press the Steam button → Settings → System and turn on “Enable Developer Mode”.</dd>
       <dt>It says <code>command not found</code> or something similar, or nothing happens</dt>
       <dd>
         The command you typed is probably a little off. Bring it back with <kbd>↑</kbd>, check these, fix it and press <kbd>Enter</kbd>.
