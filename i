@@ -200,7 +200,7 @@ detect_lang() {
 usage() {
     if [ "$lang" = ja ]; then
         cat <<'EOF'
-Steam Frame アプリのインストーラー（sasaken1102r）
+ささけん＠の Steam Frame アプリ（インストールのしかた）
 
   curl -fsSL https://frame.sasaken1102s.net | sh
       メニューから選んでインストール・更新・アンインストール
@@ -216,7 +216,7 @@ sudo は使わず、ホームフォルダの中にだけインストールしま
 EOF
     else
         cat <<'EOF'
-Installer for sasaken1102r's Steam Frame apps
+Steam Frame apps by sasaken@ (installer)
 
   curl -fsSL https://frame.sasaken1102s.net | sh
       pick apps from a menu to install, update or uninstall
@@ -709,7 +709,7 @@ status_text() { # app
 }
 
 menu() {
-    printf '\n%s%s%s\n' "$c_bold" "$(t 'Steam Frame アプリのインストーラー' "Steam Frame app installer")" "$c_off"
+    printf '\n%s%s%s\n' "$c_bold" "$(t 'ささけん＠の Steam Frame アプリ' "Steam Frame apps by sasaken@")" "$c_off"
     for _a in $all_apps; do
         printf '\n  %s) %-20s [%s]\n' "$(app_number "$_a")" "$_a" "$(status_text "$_a")"
         printf '     %s\n' "$(app_desc "$_a")"

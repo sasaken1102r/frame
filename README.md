@@ -1,6 +1,6 @@
-# Steam Frame アプリのインストーラー
+# ささけん＠の Steam Frame アプリ
 
-Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1 行打つだけでインストール・更新・アンインストール（削除）するためのスクリプトです。
+PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の自作アプリ 4 つを、Frame の Konsole にコマンドを入力して、メニューから選んでインストール・更新・アンインストール（削除）するためのスクリプトです。1 つだけでも、4 つ全部でも入れられます。
 
 [English below](#english)
 
@@ -59,7 +59,7 @@ MIT。[LICENSE](LICENSE) を参照してください。非公式のツールで�
 
 ## English
 
-Installs, updates or uninstalls sasaken1102r's four Steam Frame apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) with one line in the headset's Konsole:
+Steam Frame apps by sasaken@ — no PC needed: install right inside the Frame, in a few minutes. Install, update or uninstall the four apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) by typing a command into the headset's Konsole and picking from the menu (one app or all four):
 
 ```sh
 curl -fsSL https://frame.sasaken1102s.net | sh

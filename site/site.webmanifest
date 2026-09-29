@@ -1,7 +1,7 @@
 {
-  "name": "Steam Frame アプリのインストーラー",
-  "short_name": "Frame Apps",
-  "description": "Steam Frame 用の非公式アプリ 4 つを、Konsole に 1 行入力するだけでインストールできるインストーラー",
+  "name": "ささけん＠の Steam Frame アプリ",
+  "short_name": "ささけん＠Frame",
+  "description": "PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の非公式アプリ 4 つを、Konsole のメニューから選んで入れられます",
   "lang": "ja",
   "start_url": "/",
   "scope": "/",

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Steam Frame アプリのインストーラー｜日本語入力・アイトラッキング</title>
-<meta name="description" content="Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole に 1 行入力するだけでインストール・更新できる無料のインストーラー。VRChat へのアイトラッキング送信、日本語フリック入力、マイク調整、fps 表示。">
+<title>ささけん＠の Steam Frame アプリ｜インストールのしかた</title>
+<meta name="description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole でコマンドを入力してメニューから選ぶだけで入れられます。無料。VRChat へのアイトラッキング送信、日本語フリック入力、マイク調整、fps 表示。">
 <link rel="canonical" href="https://frame.sasaken1102s.net/">
 <meta name="theme-color" content="#0e1015">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -14,17 +14,17 @@
 <link rel="manifest" href="/site.webmanifest">
 <!-- OGP / X（Twitter）カード。画像を変えたらファイル名の日付も変える（SNS のキャッシュ対策） -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Steam Frame アプリのインストーラー">
-<meta property="og:title" content="Steam Frame アプリのインストーラー">
-<meta property="og:description" content="Konsole に 1 行入力するだけで、Steam Frame 用の非公式アプリ 4 つ（アイトラッキングの VRChat 送信・日本語フリック入力・マイク調整・fps 表示）をインストールできます。無料。">
+<meta property="og:site_name" content="ささけん＠の Steam Frame アプリ">
+<meta property="og:title" content="ささけん＠の Steam Frame アプリ｜インストールのしかた">
+<meta property="og:description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の非公式アプリ 4 つ（アイトラッキングの VRChat 送信・日本語フリック入力・マイク調整・fps 表示）を、Konsole のメニューから選んで入れられます。無料。">
 <meta property="og:url" content="https://frame.sasaken1102s.net/">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:image" content="https://frame.sasaken1102s.net/og_2026-09-29.png">
+<meta property="og:image" content="https://frame.sasaken1102s.net/og_2026-09-30.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Steam Frame アプリのインストーラー。Konsole に curl -fsSL https://frame.sasaken1102s.net | sh と入力して、frameeyeosc・frame-jp-keyboard・frame-mic-tuner・frame-perf-overlay をインストールできる">
+<meta property="og:image:alt" content="ささけん＠の Steam Frame アプリ。Konsole に curl -fsSL https://frame.sasaken1102s.net | sh と入力して、frameeyeosc・frame-jp-keyboard・frame-mic-tuner・frame-perf-overlay をインストールできる">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {
@@ -34,9 +34,9 @@
       "@type": "WebSite",
       "@id": "https://frame.sasaken1102s.net/#website",
       "url": "https://frame.sasaken1102s.net/",
-      "name": "Steam Frame アプリのインストーラー",
-      "alternateName": "Steam Frame app installer",
-      "description": "Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole に 1 行入力するだけでインストール・更新・アンインストールできる無料のインストーラー。",
+      "name": "ささけん＠の Steam Frame アプリ",
+      "alternateName": "Steam Frame apps by sasaken@",
+      "description": "Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole でコマンドを入力し、メニューから選んでインストール・更新・アンインストールできる無料のアプリ集。PC なしで、Frame の中だけで手短にインストールできます。",
       "inLanguage": ["ja", "en"],
       "author": { "@id": "https://github.com/sasaken1102r#person" }
     },
@@ -245,6 +245,7 @@ h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
 /* ---- ファーストビュー ---- */
 .hero { margin-top: 8px; border: 2px solid var(--k-accent); padding: 24px 16px; }
 .hero h1 { font-size: 30px; line-height: 1.35; font-weight: 700; margin: 0 0 8px; }
+.hero .catch { font-size: 20px; font-weight: 700; color: var(--k-accent-text); margin: 0 0 12px; }
 .hero .lead { font-size: 19px; color: var(--k-text-soft); margin: 0 0 20px; }
 .hero-cmd {
   margin: 0;
@@ -561,6 +562,7 @@ footer p { margin: 4px 0; }
   .app { padding: 0; }
   .hero { padding: 36px 32px; }
   .hero h1 { font-size: 38px; }
+  .hero .catch { font-size: 24px; }
   .hero .lead { font-size: 21px; }
   .hero-cmd { padding: 18px 22px; }
   .hero-cmd code { font-size: 30px; }
@@ -599,10 +601,11 @@ footer p { margin: 4px 0; }
 
 <!-- ファーストビュー: 何のページか ＋ 入力するコマンド ＋ 読み方。SteamVR の純正キーボードではコピー＆ペーストできないので、入力が前提 -->
 <div class="card hero">
-  <h1><span lang="ja">Steam Frame アプリのインストーラー</span><span lang="en">Steam Frame app installer</span></h1>
+  <h1><span lang="ja">ささけん＠の Steam Frame アプリ</span><span lang="en">Steam Frame apps by sasaken@</span></h1>
+  <p class="catch"><span lang="ja">PC なしで、Frame の中だけで手短にインストール</span><span lang="en">No PC needed — install right inside the Frame, in a few minutes.</span></p>
   <p class="lead">
-    <span lang="ja">ヘッドセットの Konsole に、この 1 行を入力して Enter。あとはメニューで、ほしいアプリの番号を選ぶだけ。1 つだけでも、4 つ全部でもインストールできます。</span>
-    <span lang="en">Type this one line into Konsole on your headset and press Enter. Then pick the apps you want from the menu: just one, or all four.</span>
+    <span lang="ja">Frame の Konsole にこのコマンドを入力して Enter。あとはメニューから、ほしいアプリの番号を選ぶだけ。1 つだけでも、4 つ全部でもインストールできます。</span>
+    <span lang="en">Type this command into Konsole on your Frame and press Enter. Then pick the apps you want from the menu: just one, or all four.</span>
   </p>
   <div class="cmd-box">
     <pre class="hero-cmd"><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
@@ -618,7 +621,7 @@ footer p { margin: 4px 0; }
     <ol class="tokens">
       <li class="tok">
         <code class="tok-key">curl</code>
-        <span class="tok-say"><span lang="ja">カール。小文字の c・u・r・l。インストーラーをダウンロードする</span><span lang="en">Lowercase c, u, r, l. Downloads the installer</span></span>
+        <span class="tok-say"><span lang="ja">カール。小文字の c・u・r・l。インストール用のスクリプトをダウンロードする</span><span lang="en">Lowercase c, u, r, l. Downloads the install script</span></span>
       </li>
       <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
       <li class="tok">
@@ -638,7 +641,7 @@ footer p { margin: 4px 0; }
       <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
       <li class="tok">
         <code class="tok-key">sh</code>
-        <span class="tok-say"><span lang="ja">エス・エイチ（小文字）。ダウンロードしたインストーラーを動かす。最後に <kbd>Enter</kbd></span><span lang="en">Lowercase s, h. Runs the downloaded installer. Then press <kbd>Enter</kbd></span></span>
+        <span class="tok-say"><span lang="ja">エス・エイチ（小文字）。ダウンロードしたスクリプトを動かす。最後に <kbd>Enter</kbd></span><span lang="en">Lowercase s, h. Runs the downloaded script. Then press <kbd>Enter</kbd></span></span>
       </li>
     </ol>
   </div>
@@ -661,7 +664,7 @@ footer p { margin: 4px 0; }
 
   <div class="card">
     <figure class="howto">
-      <video src="media/howto_2026-09-29_23-23-22.mp4" poster="media/howto_2026-09-29_23-23-22.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストーラーを使っている動画 / Video of using the installer"></video>
+      <video src="media/howto_2026-09-29_23-23-22.mp4" poster="media/howto_2026-09-29_23-23-22.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストールのしかたの動画 / Video of how to install"></video>
       <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ、約 1 分）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 5 (about a minute). The video skips the typing.</span></figcaption>
     </figure>
 
@@ -687,7 +690,7 @@ footer p { margin: 4px 0; }
         <span class="num" aria-hidden="true">3</span>
         <h3><span lang="ja">コマンドを入力して Enter</span><span lang="en">Type the command and press Enter</span></h3>
         <div class="step-body">
-          <p><span lang="ja">Konsole に、この 1 行を入力して <kbd>Enter</kbd> を押します。区切りごとの打ち方は、上の「<a href="#read">コマンドの読み方</a>」にあります。</span><span lang="en">Type this one line into Konsole and press <kbd>Enter</kbd>. See “<a href="#read">How to read the command</a>” above for each part.</span></p>
+          <p><span lang="ja">Konsole に、このコマンドを入力して <kbd>Enter</kbd> を押します。区切りごとの打ち方は、上の「<a href="#read">コマンドの読み方</a>」にあります。</span><span lang="en">Type this command into Konsole and press <kbd>Enter</kbd>. See “<a href="#read">How to read the command</a>” above for each part.</span></p>
           <div class="cmd wrap-cmd">
             <pre><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
           </div>
@@ -719,7 +722,7 @@ footer p { margin: 4px 0; }
           </ul>
           <div class="term" lang="ja">
             <div class="term-bar">Konsole</div>
-<pre><code><span class="t-b">Steam Frame アプリのインストーラー</span>
+<pre><code><span class="t-b">ささけん＠の Steam Frame アプリ</span>
 
   1) frameeyeosc          [<span class="t-dim">未インストール</span>]
      視線とまぶたを OSC で VRChat に送る
@@ -744,7 +747,7 @@ footer p { margin: 4px 0; }
           <p class="term-caption" lang="ja">はじめてインストールするときの表示です（例: 1 と 4 を選んだところ）。インストール済みのアプリは <code>[インストール済み 0.5.3]</code> のように版も出ます。</p>
           <div class="term" lang="en">
             <div class="term-bar">Konsole</div>
-<pre><code><span class="t-b">Steam Frame app installer</span>
+<pre><code><span class="t-b">Steam Frame apps by sasaken@</span>
 
   1) frameeyeosc          [<span class="t-dim">not installed</span>]
      Sends eye gaze and eyelids to VRChat over OSC
@@ -913,7 +916,7 @@ Type what you want to do and press Enter
         <ul>
           <li>スペース：<code>curl</code>・<code class="nw">-fsSL</code>・アドレス・<code>|</code>・<code>sh</code> の間に 1 つずつ（4 か所）</li>
           <li>大文字と小文字：大文字は <code class="nw">-fsSL</code> の <code>S</code> と <code>L</code> だけ</li>
-          <li>最後の <code>| sh</code>：抜けていると、文字（インストーラーの中身）がたくさん出て終わります</li>
+          <li>最後の <code>| sh</code>：抜けていると、文字（スクリプトの中身）がたくさん出て終わります</li>
           <li><code>curl: (6) Could not resolve host</code> のように <code>curl:</code> で始まる表示は、curl（ダウンロード）のエラーです。アドレスの綴りと、ヘッドセットがネットにつながっているかを確かめてください</li>
         </ul>
       </dd>
@@ -949,7 +952,7 @@ Type what you want to do and press Enter
         <ul>
           <li>Spaces: one between <code>curl</code>, <code class="nw">-fsSL</code>, the address, <code>|</code> and <code>sh</code> (4 in all)</li>
           <li>Capitals: only the <code>S</code> and <code>L</code> in <code class="nw">-fsSL</code></li>
-          <li><code>| sh</code> at the end: without it, lots of text (the installer itself) is printed and it ends</li>
+          <li><code>| sh</code> at the end: without it, lots of text (the script itself) is printed and it ends</li>
           <li>Messages starting with <code>curl:</code>, like <code>curl: (6) Could not resolve host</code>, come from curl (the download). Check the spelling of the address and that the headset is online</li>
         </ul>
       </dd>
