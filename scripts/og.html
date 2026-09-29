@@ -1,0 +1,80 @@
+<!doctype html>
+<!-- OG 画像（site/og_YYYY-MM-DD.png）の元。ヘッドレス Chrome で 1200x630 をスクショする:
+     chrome --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot=og.png file:///.../scripts/og.html -->
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>OG image</title>
+<style>
+:root {
+  --k-bg: #0e1015;
+  --k-card: #1a1d24;
+  --k-text: #f2f3f5;
+  --k-text-muted: #a3a9b4;
+  --k-text-soft: #dfe2e7;
+  --k-border: #4a505c;
+  --k-divider: #3a3f4a;
+  --k-control: #20242c;
+  --k-accent: #e07ef5;
+  --k-accent-text: #f0c4fa;
+  --sans: "Noto Sans JP", "Yu Gothic UI", "Meiryo", sans-serif;
+  --mono: "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: var(--k-bg); }
+body { color: var(--k-text); font-family: var(--sans); padding: 36px; }
+.card {
+  height: 100%;
+  background: var(--k-card);
+  border: 3px solid var(--k-accent);
+  border-radius: 26px;
+  padding: 38px 48px 34px;
+  display: flex;
+  flex-direction: column;
+}
+.top { display: flex; align-items: center; gap: 16px; }
+.top svg { width: 60px; height: 60px; flex: none; }
+.top .url { font: 700 24px/1 var(--mono); color: var(--k-text-muted); }
+h1 { margin: 26px 0 0; font-size: 54px; white-space: nowrap; line-height: 1.2; font-weight: 800; letter-spacing: .01em; }
+.lead { margin: 14px 0 0; font-size: 28px; font-weight: 700; color: var(--k-accent-text); }
+.cmd {
+  margin: 26px 0 0;
+  padding: 16px 24px;
+  background: var(--k-bg);
+  border: 2px solid var(--k-border);
+  border-radius: 16px;
+  font: 700 32px/1.3 var(--mono);
+  white-space: nowrap;
+}
+.cmd .p { color: var(--k-accent); }
+.apps {
+  margin: auto 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.app { background: var(--k-control); border-radius: 14px; padding: 12px 14px; }
+.app b { display: block; font: 700 19px/1.3 var(--mono); color: var(--k-text); }
+.app span { display: block; margin-top: 4px; font-size: 16px; line-height: 1.35; color: var(--k-text-soft); }
+.foot { margin: 14px 0 0; display: flex; justify-content: space-between; font-size: 17px; color: var(--k-text-muted); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0e1015"/><g fill="none" stroke="#e07ef5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19 L29 32 L15 45"/><path d="M35 45 H49"/></g></svg>
+    <span class="url">frame.sasaken1102s.net</span>
+  </div>
+  <h1>Steam Frame アプリのインストーラー</h1>
+  <p class="lead">Konsole に 1 行入力するだけ。4 つのアプリを選んでインストール</p>
+  <div class="cmd"><span class="p">$</span> curl -fsSL https://frame.sasaken1102s.net | sh</div>
+  <div class="apps">
+    <div class="app"><b>frameeyeosc</b><span>視線とまぶたを VRChat へ</span></div>
+    <div class="app"><b>frame-jp-keyboard</b><span>フリック入力とかな漢字変換</span></div>
+    <div class="app"><b>frame-mic-tuner</b><span>エコー除去・ノイズ除去</span></div>
+    <div class="app"><b>frame-perf-overlay</b><span>fps・温度を視界に表示</span></div>
+  </div>
+  <div class="foot"><span>無料・MIT License</span><span>非公式のツール（Valve とは関係ありません）</span></div>
+</div>
+</body>
+</html>

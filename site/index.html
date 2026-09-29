@@ -4,9 +4,103 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Steam Frame アプリのインストーラー</title>
-<meta name="description" content="Steam Frame 用の自作アプリ 4 つを、Konsole に 1 行打つだけで、インストール・更新・アンインストールできる。">
-<link rel="icon" href="data:,">
+<title>Steam Frame アプリのインストーラー｜日本語入力・アイトラッキング</title>
+<meta name="description" content="Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole に 1 行入力するだけでインストール・更新できる無料のインストーラー。VRChat へのアイトラッキング送信、日本語フリック入力、マイク調整、fps 表示。">
+<link rel="canonical" href="https://frame.sasaken1102s.net/">
+<meta name="theme-color" content="#0e1015">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<!-- OGP / X（Twitter）カード。画像を変えたらファイル名の日付も変える（SNS のキャッシュ対策） -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steam Frame アプリのインストーラー">
+<meta property="og:title" content="Steam Frame アプリのインストーラー">
+<meta property="og:description" content="Konsole に 1 行入力するだけで、Steam Frame 用の非公式アプリ 4 つ（アイトラッキングの VRChat 送信・日本語フリック入力・マイク調整・fps 表示）をインストールできます。無料。">
+<meta property="og:url" content="https://frame.sasaken1102s.net/">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://frame.sasaken1102s.net/og_2026-09-29.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Steam Frame アプリのインストーラー。Konsole に curl -fsSL https://frame.sasaken1102s.net | sh と入力して、frameeyeosc・frame-jp-keyboard・frame-mic-tuner・frame-perf-overlay をインストールできる">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://frame.sasaken1102s.net/#website",
+      "url": "https://frame.sasaken1102s.net/",
+      "name": "Steam Frame アプリのインストーラー",
+      "alternateName": "Steam Frame app installer",
+      "description": "Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole に 1 行入力するだけでインストール・更新・アンインストールできる無料のインストーラー。",
+      "inLanguage": ["ja", "en"],
+      "author": { "@id": "https://github.com/sasaken1102r#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://github.com/sasaken1102r#person",
+      "name": "sasaken1102r",
+      "url": "https://github.com/sasaken1102r"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "frameeyeosc",
+      "description": "Steam Frame のアイトラッキング（視線とまぶた）を、OSC で PC 版 VRChat のアバターの目に送る。konsti219/frameeyeosc のフォーク。",
+      "url": "https://github.com/sasaken1102r/frameeyeosc",
+      "isBasedOn": "https://github.com/konsti219/frameeyeosc",
+      "operatingSystem": "SteamOS",
+      "applicationCategory": "UtilitiesApplication",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "author": [
+        { "@type": "Person", "name": "konsti219", "url": "https://github.com/konsti219" },
+        { "@id": "https://github.com/sasaken1102r#person" }
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "frame-jp-keyboard",
+      "description": "Steam Frame の VR キーボードに、12 キーのフリック入力とかな漢字変換を付ける。",
+      "url": "https://github.com/sasaken1102r/frame-jp-keyboard",
+      "operatingSystem": "SteamOS",
+      "applicationCategory": "UtilitiesApplication",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "author": { "@id": "https://github.com/sasaken1102r#person" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "frame-mic-tuner",
+      "description": "Steam Frame のマイクのエコー除去とノイズ除去を、SteamVR のダッシュボードから切り替える。",
+      "url": "https://github.com/sasaken1102r/frame-mic-tuner",
+      "operatingSystem": "SteamOS",
+      "applicationCategory": "UtilitiesApplication",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "author": { "@id": "https://github.com/sasaken1102r#person" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "frame-perf-overlay",
+      "description": "Steam Frame のフレームレート、CPU・GPU の負荷、温度、電池などを視界の隅に表示する。",
+      "url": "https://github.com/sasaken1102r/frame-perf-overlay",
+      "operatingSystem": "SteamOS",
+      "applicationCategory": "UtilitiesApplication",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "author": { "@id": "https://github.com/sasaken1102r#person" }
+    }
+  ]
+}
+</script>
 <script>
 /**
  * 保存した言語を読む（読めない環境では null）
@@ -428,6 +522,8 @@ details summary {
   list-style: none;
 }
 details summary::-webkit-details-marker { display: none; }
+/* 見出しの順（h2 → h3）を保つための h2。見た目は summary のまま */
+.summary-title { font: inherit; margin: 0; }
 details summary::before {
   content: "";
   flex: none;
@@ -505,8 +601,8 @@ footer p { margin: 4px 0; }
 <div class="card hero">
   <h1><span lang="ja">Steam Frame アプリのインストーラー</span><span lang="en">Steam Frame app installer</span></h1>
   <p class="lead">
-    <span lang="ja">ヘッドセットの Konsole に、この 1 行を入力して Enter。あとはメニューから選ぶだけで、アプリ 4 つをインストールできます。</span>
-    <span lang="en">Type this one line into Konsole on your headset and press Enter. Then pick from the menu to install any of four apps.</span>
+    <span lang="ja">ヘッドセットの Konsole に、この 1 行を入力して Enter。あとはメニューで、ほしいアプリの番号を選ぶだけ。1 つだけでも、4 つ全部でもインストールできます。</span>
+    <span lang="en">Type this one line into Konsole on your headset and press Enter. Then pick the apps you want from the menu: just one, or all four.</span>
   </p>
   <div class="cmd-box">
     <pre class="hero-cmd"><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
@@ -722,7 +818,7 @@ Type what you want to do and press Enter
 
   <div class="apps">
     <article class="card app">
-      <video src="media/frameeyeosc.mp4" poster="media/frameeyeosc.jpg" width="960" height="540" autoplay muted loop playsinline preload="metadata" aria-label="frameeyeosc のデモ動画 / demo video"></video>
+      <video src="media/frameeyeosc.mp4" poster="media/frameeyeosc.jpg" width="960" height="540" autoplay muted loop playsinline preload="metadata" role="img" aria-label="frameeyeosc のデモ動画 / demo video"></video>
       <div class="app-body">
         <div class="app-head"><span class="app-num"><span lang="ja">番号 1</span><span lang="en">No. 1</span></span><h3>frameeyeosc</h3></div>
         <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">VRChat のアバターの目を、自分の目と同じように動かしたい</span><span lang="en">Making your VRChat avatar's eyes move like your own</span></p>
@@ -732,7 +828,7 @@ Type what you want to do and press Enter
     </article>
 
     <article class="card app">
-      <video src="media/frame-jp-keyboard.mp4" poster="media/frame-jp-keyboard.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-jp-keyboard のデモ動画 / demo video"></video>
+      <video src="media/frame-jp-keyboard.mp4" poster="media/frame-jp-keyboard.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" role="img" aria-label="frame-jp-keyboard のデモ動画 / demo video"></video>
       <div class="app-body">
         <div class="app-head"><span class="app-num"><span lang="ja">番号 2</span><span lang="en">No. 2</span></span><h3>frame-jp-keyboard</h3></div>
         <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">VR の中で、スマホみたいに日本語を打ちたい</span><span lang="en">Typing Japanese in VR the way you do on a phone</span></p>
@@ -752,7 +848,7 @@ Type what you want to do and press Enter
     </article>
 
     <article class="card app">
-      <video src="media/frame-perf-overlay.mp4" poster="media/frame-perf-overlay.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-perf-overlay のデモ動画 / demo video"></video>
+      <video src="media/frame-perf-overlay.mp4" poster="media/frame-perf-overlay.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" role="img" aria-label="frame-perf-overlay のデモ動画 / demo video"></video>
       <div class="app-body">
         <div class="app-head"><span class="app-num"><span lang="ja">番号 4</span><span lang="en">No. 4</span></span><h3>frame-perf-overlay</h3></div>
         <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">カクつく・本体が熱い、その原因をその場で知りたい</span><span lang="en">Seeing on the spot why things stutter or the headset gets hot</span></p>
@@ -872,9 +968,9 @@ Type what you want to do and press Enter
 </section>
 
 <!-- 詳しい人向け -->
-<section id="advanced" aria-label="詳しい人向け / For advanced users">
+<section id="advanced" aria-labelledby="advanced-title">
   <details class="card">
-    <summary><span lang="ja">詳しい人向け（質問なしで使う・オプション・中でやること）</span><span lang="en">For advanced users (no questions, options, what it does)</span></summary>
+    <summary><h2 id="advanced-title" class="summary-title"><span lang="ja">詳しい人向け（質問なしで使う・オプション・中でやること）</span><span lang="en">For advanced users (no questions, options, what it does)</span></h2></summary>
     <div class="details-body">
       <h3><span lang="ja">質問なしで使う</span><span lang="en">Without questions</span></h3>
       <p class="hint"><span lang="ja">ヘッドセットでは入力、PC から SSH でつないでいるなら［コピー］が使えます。</span><span lang="en">Type these on the headset; over SSH from a PC, the Copy buttons work.</span></p>

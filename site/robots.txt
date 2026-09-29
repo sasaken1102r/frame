@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://frame.sasaken1102s.net/sitemap.xml
