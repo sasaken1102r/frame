@@ -153,20 +153,67 @@ h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
 .hero h1 { font-size: 30px; line-height: 1.35; font-weight: 700; margin: 0 0 8px; }
 .hero .lead { font-size: 19px; color: var(--k-text-soft); margin: 0 0 20px; }
 .hero-cmd {
-  margin: 0 0 12px;
-  padding: 14px 14px;
+  margin: 0;
+  padding: 14px 12px;
   background: var(--k-bg);
   border: 2px solid var(--k-border);
   border-radius: var(--k-button-radius);
 }
 .hero-cmd code {
   display: block;
-  font: 700 16px/1.6 var(--mono);
+  font: 700 21px/1.5 var(--mono);
   color: var(--k-text);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   -webkit-user-select: all;
   user-select: all;
+}
+/* PC から SSH で入れる人向けの小さなコピー */
+.ssh-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--k-text-muted);
+}
+.ssh-copy .copy { min-height: 44px; padding: 0 18px; font-size: 16px; }
+
+/* コマンドの読み方（区切りごとの図） */
+.read { margin: 24px 0 0; padding-top: 20px; border-top: 1px solid var(--k-divider); }
+.read h2 { font-size: 21px; margin: 0; }
+.read .hint { margin: 4px 0 14px; }
+.tokens { list-style: none; margin: 0; padding: 0; }
+.tok { display: grid; gap: 6px; }
+.tok-key {
+  justify-self: start;
+  max-width: 100%;
+  font: 700 20px/1.4 var(--mono);
+  color: var(--k-text);
+  background: var(--k-bg);
+  border: 2px solid var(--k-border);
+  border-radius: 10px;
+  padding: 4px 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.tok-key .cap { color: var(--k-accent); }
+.tok-say { color: var(--k-text-soft); font-size: 17px; line-height: 1.6; }
+.tok-say strong { color: var(--k-accent-text); }
+.tok-sp { display: flex; align-items: center; gap: 10px; padding: 8px 0 8px 14px; font-size: 15px; color: var(--k-text-muted); }
+/* 半角スペースの印（⎵ の形を線で描く。記号のフォントが無くても出る） */
+.sp-mark {
+  display: inline-block;
+  flex: none;
+  width: 1.4em;
+  height: .6em;
+  border: 2px solid var(--k-accent);
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  vertical-align: .05em;
 }
 .btn {
   display: inline-flex;
@@ -187,12 +234,9 @@ h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
 }
 .btn:hover { background: var(--k-control-hover); color: var(--k-text); }
 .btn:active { background: var(--k-control-down); }
-.copy { color: var(--k-on-accent); background: var(--k-accent); border-color: var(--k-accent); }
-.copy:hover { color: var(--k-on-accent); background: var(--k-accent-hover); border-color: var(--k-accent-hover); }
-.copy:active { background: var(--k-accent-down); border-color: var(--k-accent-down); }
+/* コピーは PC から SSH で入れる人向けの脇役なので、ふつうのボタンの色（成功で緑、失敗で赤） */
 .copy.ok, .copy.ok:hover { background: var(--k-chip-ok-fill); border-color: var(--k-chip-ok-text); color: var(--k-chip-ok-text); }
 .copy.ng, .copy.ng:hover { background: var(--k-danger-fill); border-color: var(--k-danger-text); color: var(--k-danger-text); }
-.hero .copy { width: 100%; min-height: 64px; font-size: 21px; }
 .hero-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; }
 .hero-links .btn { flex: 1 1 200px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
@@ -231,6 +275,7 @@ h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
   padding: 1px 7px;
   border-radius: 6px;
 }
+.nw { white-space: nowrap; }
 kbd {
   display: inline-block;
   font: 700 .85em/1.5 var(--mono);
@@ -421,10 +466,12 @@ footer p { margin: 4px 0; }
   .hero { padding: 36px 32px; }
   .hero h1 { font-size: 38px; }
   .hero .lead { font-size: 21px; }
-  .hero-cmd-row { display: flex; gap: 12px; align-items: stretch; }
-  .hero-cmd-row .hero-cmd { flex: 1; margin: 0; padding: 16px 18px; display: flex; align-items: center; min-width: 0; }
-  .hero-cmd code { font-size: 19px; }
-  .hero .copy { width: auto; flex: none; min-width: 220px; }
+  .hero-cmd { padding: 18px 22px; }
+  .hero-cmd code { font-size: 30px; }
+  .read h2 { font-size: 23px; }
+  .tokens { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 20px; align-items: center; }
+  .tok { display: contents; }
+  .tok-sp { grid-column: 1 / -1; padding: 6px 0 6px 16px; }
   .cmd { flex-direction: row; align-items: stretch; }
   .hero-links .btn { flex: 0 1 auto; }
   h2 { font-size: 30px; }
@@ -454,17 +501,52 @@ footer p { margin: 4px 0; }
 
 <main>
 
-<!-- ファーストビュー: 何のページか ＋ コマンド ＋ コピー -->
+<!-- ファーストビュー: 何のページか ＋ 入力するコマンド ＋ 読み方。SteamVR の純正キーボードではコピー＆ペーストできないので、入力が前提 -->
 <div class="card hero">
   <h1><span lang="ja">Steam Frame アプリのインストーラー</span><span lang="en">Steam Frame app installer</span></h1>
   <p class="lead">
-    <span lang="ja">ヘッドセットの Konsole にこの 1 行を貼り付けて Enter。あとはメニューから選ぶだけで、アプリ 4 つをインストールできます。</span>
-    <span lang="en">Paste this one line into Konsole on your headset and press Enter. Then pick from the menu to install any of four apps.</span>
+    <span lang="ja">ヘッドセットの Konsole に、この 1 行を入力して Enter。あとはメニューから選ぶだけで、アプリ 4 つをインストールできます。</span>
+    <span lang="en">Type this one line into Konsole on your headset and press Enter. Then pick from the menu to install any of four apps.</span>
   </p>
-  <div class="cmd-box hero-cmd-row">
+  <div class="cmd-box">
     <pre class="hero-cmd"><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
-    <button class="btn copy" type="button"><span lang="ja">コマンドをコピー</span><span lang="en">Copy the command</span></button>
+    <p class="ssh-copy">
+      <span><span lang="ja">PC から SSH で入れる人向け</span><span lang="en">For installing over SSH from a PC</span></span>
+      <button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button>
+    </p>
   </div>
+
+  <div class="read" id="read">
+    <h2><span lang="ja">コマンドの読み方</span><span lang="en">How to read the command</span></h2>
+    <p class="hint"><span lang="ja">左から順に入力します。<span class="sp-mark" aria-hidden="true"></span> のところには半角スペースを 1 つ（全部で 4 か所）。文字はすべて半角です。</span><span lang="en">Type it from left to right. Put one space at each <span class="sp-mark" aria-hidden="true"></span> (4 in all).</span></p>
+    <ol class="tokens">
+      <li class="tok">
+        <code class="tok-key">curl</code>
+        <span class="tok-say"><span lang="ja">カール。小文字の c・u・r・l。インストーラーをダウンロードする</span><span lang="en">Lowercase c, u, r, l. Downloads the installer</span></span>
+      </li>
+      <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
+      <li class="tok">
+        <code class="tok-key">-fs<span class="cap">SL</span></code>
+        <span class="tok-say"><span lang="ja">マイナス（ハイフン）のあとに、エフ・エス・エス・エル。<strong>うしろの S と L は大文字</strong></span><span lang="en">A hyphen (minus), then f, s, S, L. <strong>The last S and L are capitals</strong></span></span>
+      </li>
+      <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
+      <li class="tok">
+        <code class="tok-key">https://<wbr>frame.sasaken1102s.net</code>
+        <span class="tok-say"><span lang="ja">このページのアドレス。https のあとに <code>://</code>、sasaken のあとは数字の 1102。全部小文字</span><span lang="en">The address of this page. <code>://</code> after https, the number 1102 after sasaken, all lowercase</span></span>
+      </li>
+      <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
+      <li class="tok">
+        <code class="tok-key">|</code>
+        <span class="tok-say"><span lang="ja">縦棒。<strong>SteamVR の純正キーボードでは、Backspace の下のキー</strong></span><span lang="en">Vertical bar. <strong>On the stock SteamVR keyboard, it's the key below Backspace</strong></span></span>
+      </li>
+      <li class="tok-sp"><span class="sp-mark" aria-hidden="true"></span><span><span lang="ja">スペース</span><span lang="en">space</span></span></li>
+      <li class="tok">
+        <code class="tok-key">sh</code>
+        <span class="tok-say"><span lang="ja">エス・エイチ（小文字）。ダウンロードしたインストーラーを動かす。最後に <kbd>Enter</kbd></span><span lang="en">Lowercase s, h. Runs the downloaded installer. Then press <kbd>Enter</kbd></span></span>
+      </li>
+    </ol>
+  </div>
+
   <ul class="chips">
     <li><span lang="ja">sudo・パスワードは要らない</span><span lang="en">No sudo, no password</span></li>
     <li><span lang="ja">ホームフォルダの中にだけインストール</span><span lang="en">Only writes inside your home folder</span></li>
@@ -482,51 +564,43 @@ footer p { margin: 4px 0; }
   <p class="sub"><span lang="ja">ヘッドセットの中で、上から順に進めれば大丈夫です。</span><span lang="en">Do these on the headset, from top to bottom.</span></p>
 
   <div class="card">
-    <!--
-      使い方の動画: site/media/howto.mp4（ポスター site/media/howto.jpg）を置いたら、
-      すぐ下の figure を囲んでいる 2 行（コメントの開始記号だけの行と、「動画ここまで」の行）を消すと出ます。
-    -->
-    <!--
     <figure class="howto">
       <video src="media/howto.mp4" poster="media/howto.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストーラーを使っている動画 / Video of using the installer"></video>
-      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ）</span><span lang="en">The whole flow, steps 1 to 5</span></figcaption>
+      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 4 までの流れ、約 50 秒）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 4 (about 50 seconds). The video skips the typing.</span></figcaption>
     </figure>
-    動画ここまで -->
 
     <ol class="steps">
       <li class="step">
         <span class="num" aria-hidden="true">1</span>
-        <h3><span lang="ja">このページを Frame のブラウザで開いて、コマンドをコピー</span><span lang="en">Open this page in the Frame's browser and copy the command</span></h3>
-        <div class="step-body">
-          <p><span lang="ja">下のボタン（上のものと同じ）を押します。緑になって「コピーした」と出れば OK です。</span><span lang="en">Press the button below (same as the one at the top). It turns green and says “Copied” when it worked.</span></p>
-          <div class="cmd wrap-cmd">
-            <pre><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
-            <button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button>
-          </div>
-        </div>
-      </li>
-
-      <li class="step">
-        <span class="num" aria-hidden="true">2</span>
         <h3><span lang="ja">Konsole を開く</span><span lang="en">Open Konsole</span></h3>
         <div class="step-body">
-          <!-- TODO: Konsole の開き方 -->
-          <p><span lang="ja">デスクトップモードに切り替えて、アプリの一覧から <strong>Konsole</strong> を開きます。</span><span lang="en">Switch to Desktop Mode and open <strong>Konsole</strong> from the app list.</span></p>
+          <p><span lang="ja">画面の下のバーにある <strong>＋</strong> を押すと「プログラムを起動」の一覧が出ます。その中の <strong>Konsole</strong> を選びます。デスクトップモードに切り替える必要はありません。</span><span lang="en">Press <strong>+</strong> on the bar at the bottom of your view to open the list of programs, then pick <strong>Konsole</strong>. No need to switch to Desktop Mode.</span></p>
           <p class="hint"><span lang="ja">Konsole は、文字を打ってコンピューターに指示を出すアプリ（ターミナル）です。</span><span lang="en">Konsole is a terminal: an app where you type commands.</span></p>
         </div>
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">3</span>
-        <h3><span lang="ja">コマンドを貼り付けて Enter</span><span lang="en">Paste the command and press Enter</span></h3>
+        <span class="num" aria-hidden="true">2</span>
+        <h3><span lang="ja">コマンドを入力して Enter</span><span lang="en">Type the command and press Enter</span></h3>
         <div class="step-body">
-          <p><span lang="ja">Konsole の中で <strong>右クリック →［貼り付け］</strong>、またはキーボードで <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。貼り付けたら <kbd>Enter</kbd> を押します。</span><span lang="en">In Konsole, <strong>right-click → Paste</strong>, or press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>. Then press <kbd>Enter</kbd>.</span></p>
-          <p class="caution"><span lang="ja"><strong><kbd>Ctrl</kbd> + <kbd>V</kbd> では貼り付けられません。</strong>Konsole では <kbd>Shift</kbd> も一緒に押します。</span><span lang="en"><strong><kbd>Ctrl</kbd> + <kbd>V</kbd> does not paste in Konsole.</strong> Add <kbd>Shift</kbd>.</span></p>
+          <p><span lang="ja">Konsole に、この 1 行を入力して <kbd>Enter</kbd> を押します。区切りごとの打ち方は、上の「<a href="#read">コマンドの読み方</a>」にあります。</span><span lang="en">Type this one line into Konsole and press <kbd>Enter</kbd>. See “<a href="#read">How to read the command</a>” above for each part.</span></p>
+          <div class="cmd wrap-cmd">
+            <pre><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
+          </div>
+          <ul lang="ja">
+            <li>打ち間違えたら、<kbd>←</kbd> <kbd>→</kbd> でカーソルを動かして直せます</li>
+            <li><kbd>Backspace</kbd> で、カーソルの左の文字を消せます</li>
+          </ul>
+          <ul lang="en">
+            <li>Made a typo? Move the cursor with <kbd>←</kbd> <kbd>→</kbd> and fix it</li>
+            <li><kbd>Backspace</kbd> deletes the character left of the cursor</li>
+          </ul>
+          <p class="caution"><span lang="ja"><strong>2 回目からは <kbd>↑</kbd> キー。</strong>Konsole で <kbd>↑</kbd> を押すと、前に入力したコマンドが出てきます。更新するときは <kbd>↑</kbd> → <kbd>Enter</kbd> だけで大丈夫です（あとで別のコマンドを打っていたら、<kbd>↑</kbd> を何回か押す）。</span><span lang="en"><strong>Next time, use the <kbd>↑</kbd> key.</strong> Pressing <kbd>↑</kbd> in Konsole brings back the command you typed before. To update, just press <kbd>↑</kbd> → <kbd>Enter</kbd> (if you typed other commands since, press <kbd>↑</kbd> a few times).</span></p>
         </div>
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">4</span>
+        <span class="num" aria-hidden="true">3</span>
         <h3><span lang="ja">アプリの番号を打って Enter</span><span lang="en">Type the app's number and press Enter</span></h3>
         <div class="step-body">
           <p><span lang="ja">こんな一覧が出ます。インストールしたいアプリの番号を打って <kbd>Enter</kbd>。</span><span lang="en">A list like this appears. Type the number of the app you want to install and press <kbd>Enter</kbd>.</span></p>
@@ -593,7 +667,7 @@ Type what you want to do and press Enter
       </li>
 
       <li class="step">
-        <span class="num" aria-hidden="true">5</span>
+        <span class="num" aria-hidden="true">4</span>
         <h3><span lang="ja">質問に答えると、「結果」が出て終わり</span><span lang="en">Answer the questions, then the result appears</span></h3>
         <div class="step-body">
           <p><span lang="ja">アプリによっては質問が出ます。<code>y</code>（はい）か <code>n</code>（いいえ）を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけ押すと、かっこの中の「Enter だけなら」の答えになります。迷ったら <kbd>Enter</kbd> で大丈夫です。</span><span lang="en">Some apps ask a question. Type <code>y</code> (yes) or <code>n</code> (no) and press <kbd>Enter</kbd>. Pressing just <kbd>Enter</kbd> gives the answer shown after “Enter =” in the brackets. When unsure, just press <kbd>Enter</kbd>.</span></p>
@@ -692,11 +766,11 @@ Type what you want to do and press Enter
 <!-- 更新・アンインストール -->
 <section id="manage" aria-labelledby="manage-title">
   <h2 id="manage-title"><span lang="ja">更新・アンインストール</span><span lang="en">Update or uninstall</span></h2>
-  <p class="sub"><span lang="ja">どちらも、上と同じコマンドを実行するだけです。</span><span lang="en">Both use the same command as above.</span></p>
+  <p class="sub"><span lang="ja">どちらも、上と同じコマンドを実行するだけです。Konsole で <kbd>↑</kbd> を押すと前に入力したコマンドが出てくるので、打ち直さなくて大丈夫です。</span><span lang="en">Both use the same command as above. Press <kbd>↑</kbd> in Konsole to bring back the command you typed before, so no need to type it again.</span></p>
   <div class="manage">
     <div class="card">
       <h3><span lang="ja">更新</span><span lang="en">Update</span></h3>
-      <p><span lang="ja">メニューで、インストール済みのアプリの番号を選ぶと、最新版に更新されます。各アプリのパネルやキーボードの更新ボタンからも更新できます。</span><span lang="en">In the menu, pick an installed app's number to get the latest version. You can also update from each app's panel or the keyboard's update button.</span></p>
+      <p><span lang="ja">Konsole で <kbd>↑</kbd> → <kbd>Enter</kbd>。出てきたメニューで、インストール済みのアプリの番号を選ぶと、最新版に更新されます。各アプリのパネルやキーボードの更新ボタンからも更新できます。</span><span lang="en">In Konsole, press <kbd>↑</kbd> → <kbd>Enter</kbd>. In the menu, pick an installed app's number to get the latest version. You can also update from each app's panel or the keyboard's update button.</span></p>
     </div>
     <div class="card">
       <h3><span lang="ja">アンインストール</span><span lang="en">Uninstall</span></h3>
@@ -724,17 +798,26 @@ Type what you want to do and press Enter
 <section id="help" aria-labelledby="help-title">
   <h2 id="help-title"><span lang="ja">困ったとき</span><span lang="en">Troubleshooting</span></h2>
   <div class="card">
-    <!-- 「」や “” で引用しているメッセージは i の文言（be24b95 時点）。i を変えたら合わせる -->
+    <!-- 「」や “” で引用しているメッセージは i の文言（be24b95 時点）。i を変えたら合わせる。
+         command not found は bash、curl: で始まるものは curl のメッセージ（i は出さない） -->
     <dl class="faq" lang="ja">
-      <dt>「コマンドが見つかりません」（command not found）と出る</dt>
-      <dd>1 行の一部しか貼り付けられていないかもしれません。このページの［コピー］でもう一度コピーして、Konsole に貼り直してください。手で打つときは <code>|</code>（縦線）まで正確に。</dd>
+      <dt><code>command not found</code>（コマンドが見つかりません）などが出る・何も起きない</dt>
+      <dd>
+        入力したコマンドが少し違っているかもしれません。<kbd>↑</kbd> で呼び出して、次を確かめて直してから <kbd>Enter</kbd>。
+        <ul>
+          <li>スペース：<code>curl</code>・<code class="nw">-fsSL</code>・アドレス・<code>|</code>・<code>sh</code> の間に 1 つずつ（4 か所）</li>
+          <li>大文字と小文字：大文字は <code class="nw">-fsSL</code> の <code>S</code> と <code>L</code> だけ</li>
+          <li>最後の <code>| sh</code>：抜けていると、文字（インストーラーの中身）がたくさん出て終わります</li>
+          <li><code>curl: (6) Could not resolve host</code> のように <code>curl:</code> で始まる表示は、curl（ダウンロード）のエラーです。アドレスの綴りと、ヘッドセットがネットにつながっているかを確かめてください</li>
+        </ul>
+      </dd>
 
-      <dt>貼り付けられない</dt>
-      <dd><kbd>Ctrl</kbd> + <kbd>V</kbd> ではなく <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>、または右クリック →［貼り付け］です。</dd>
+      <dt>コピーできない・貼り付けられない</dt>
+      <dd>SteamVR の純正キーボードでは、コピー＆ペーストができません。上の「<a href="#read">コマンドの読み方</a>」を見ながら入力してください（PC から SSH でつないでいるなら［コピー］が使えます）。</dd>
 
       <dt>結果に「失敗」と出た</dt>
       <dd>
-        横に理由が出ています。直したら、もう一度同じコマンドを実行してください。
+        横に理由が出ています。直したら、もう一度同じコマンドを実行してください<span class="nw">（<kbd>↑</kbd> → <kbd>Enter</kbd>）</span>。
         <ul>
           <li>「GitHub につながりません」…ヘッドセットがネットにつながっているか確かめる</li>
           <li>「ダウンロードできません」「SHA-256 が合わない」…ダウンロードが途中で壊れたかも。そのままもう一度</li>
@@ -752,15 +835,23 @@ Type what you want to do and press Enter
       <dd>質問の答えを待っています。<code>y</code> か <code>n</code> を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけなら、かっこの中の「Enter だけなら」の答えで進みます。</dd>
     </dl>
     <dl class="faq" lang="en">
-      <dt>It says “command not found”</dt>
-      <dd>Only part of the line may have been pasted. Copy it again with the Copy button on this page and paste it into Konsole again. If you type it by hand, include the <code>|</code> (vertical bar).</dd>
+      <dt>It says <code>command not found</code> or something similar, or nothing happens</dt>
+      <dd>
+        The command you typed is probably a little off. Bring it back with <kbd>↑</kbd>, check these, fix it and press <kbd>Enter</kbd>.
+        <ul>
+          <li>Spaces: one between <code>curl</code>, <code class="nw">-fsSL</code>, the address, <code>|</code> and <code>sh</code> (4 in all)</li>
+          <li>Capitals: only the <code>S</code> and <code>L</code> in <code class="nw">-fsSL</code></li>
+          <li><code>| sh</code> at the end: without it, lots of text (the installer itself) is printed and it ends</li>
+          <li>Messages starting with <code>curl:</code>, like <code>curl: (6) Could not resolve host</code>, come from curl (the download). Check the spelling of the address and that the headset is online</li>
+        </ul>
+      </dd>
 
-      <dt>Pasting does nothing</dt>
-      <dd>Use <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>, not <kbd>Ctrl</kbd> + <kbd>V</kbd>, or right-click → Paste.</dd>
+      <dt>I can't copy and paste</dt>
+      <dd>The stock SteamVR keyboard can't copy and paste. Type the command, following “<a href="#read">How to read the command</a>” above. (If you are connected from a PC over SSH, the Copy button works.)</dd>
 
       <dt>The result says “FAILED”</dt>
       <dd>
-        The reason is shown next to it. After fixing it, run the same command again.
+        The reason is shown next to it. After fixing it, run the same command again <span class="nw">(<kbd>↑</kbd> → <kbd>Enter</kbd>)</span>.
         <ul>
           <li>“cannot reach GitHub” … check that the headset is online</li>
           <li>“download failed” or “SHA-256 mismatch” … the download probably broke; just try again</li>
@@ -786,6 +877,7 @@ Type what you want to do and press Enter
     <summary><span lang="ja">詳しい人向け（質問なしで使う・オプション・中でやること）</span><span lang="en">For advanced users (no questions, options, what it does)</span></summary>
     <div class="details-body">
       <h3><span lang="ja">質問なしで使う</span><span lang="en">Without questions</span></h3>
+      <p class="hint"><span lang="ja">ヘッドセットでは入力、PC から SSH でつないでいるなら［コピー］が使えます。</span><span lang="en">Type these on the headset; over SSH from a PC, the Copy buttons work.</span></p>
       <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
       <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
       <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
@@ -904,13 +996,14 @@ const copyText = async (text) => {
 };
 
 /**
- * コピーボタンに、同じ箱の中のコマンドをクリップボードへ入れる処理をつける（成功で緑、失敗で赤）
+ * コピーボタンに、同じ箱（.cmd-box か .cmd）の pre の中のコマンドをクリップボードへ入れる処理をつける（成功で緑、失敗で赤）。
+ * ヘッドセットの純正キーボードではコピー＆ペーストできないので、PC から SSH で入れる人向け
  * @returns {void}
  */
 const setupCopyButtons = () => {
   document.querySelectorAll('.copy').forEach((button) => {
-    const box = button.parentElement;
-    const code = box && box.querySelector('code');
+    const box = button.closest('.cmd-box, .cmd');
+    const code = box && box.querySelector('pre code');
     if (!code) return;
     const idleHtml = button.innerHTML;
     /** @type {number|undefined} */
