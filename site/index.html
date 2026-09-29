@@ -1,12 +1,39 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>Steam Frame アプリのインストーラー</title>
-<meta name="description" content="Steam Frame 用の自作アプリ 4 つを、Konsole に 1 行打つだけで入れる・更新する・外す。">
+<meta name="description" content="Steam Frame 用の自作アプリ 4 つを、Konsole に 1 行打つだけで、インストール・更新・アンインストールできる。">
 <link rel="icon" href="data:,">
+<script>
+/**
+ * 保存した言語を読む（読めない環境では null）
+ * @returns {string|null} 'ja'・'en' か null
+ */
+const readSavedLang = () => {
+  try {
+    return localStorage.getItem('frame-installer-lang');
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * 表示する言語を決める（保存した言語 → ブラウザの言語が ja なら日本語 → それ以外は英語）
+ * @returns {'ja'|'en'} 言語
+ */
+const pickLang = () => {
+  const saved = readSavedLang();
+  if (saved === 'ja' || saved === 'en') return saved;
+  return /^ja\b/i.test(navigator.language || '') ? 'ja' : 'en';
+};
+
+document.documentElement.classList.remove('no-js');
+document.documentElement.dataset.lang = pickLang();
+document.documentElement.lang = document.documentElement.dataset.lang;
+</script>
 <style>
 :root {
   color-scheme: dark;
@@ -16,6 +43,8 @@
   --k-text: #f2f3f5;
   --k-text-muted: #a3a9b4;
   --k-text-soft: #dfe2e7;
+  --k-label-soft: #c9cdd4;
+  --k-option-text: #e6e8ec;
   --k-border: #4a505c;
   --k-divider: #3a3f4a;
   --k-control: #20242c;
@@ -32,217 +61,880 @@
   --k-danger-fill: #2a1518;
   --k-card-radius: 18px;
   --k-button-radius: 16px;
+  --k-seg-radius: 30px;
+  /* ターミナルの再現用: 全角がちょうど半角 2 つぶんになる等幅フォントを先に */
+  --term-mono: "BIZ UDGothic", "Noto Sans Mono CJK JP", "MS Gothic", "Osaka-Mono", ui-monospace, monospace;
+  --mono: ui-monospace, "Cascadia Mono", SFMono-Regular, Menlo, Consolas, "BIZ UDGothic", "Noto Sans Mono CJK JP", monospace;
 }
+
+/* 言語: JS が無いときは日本語だけ。html[data-lang] で切り替える */
+html:not([data-lang="en"]) [lang="en"]:not(html) { display: none !important; }
+html[data-lang="en"] [lang="ja"]:not(html) { display: none !important; }
+.no-js .lang-switch { display: none; }
+
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; background: var(--k-bg); }
 body {
   margin: 0;
   background: var(--k-bg);
   color: var(--k-text);
-  font: 16px/1.75 system-ui, -apple-system, "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", sans-serif;
+  font: 18px/1.8 system-ui, -apple-system, "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", sans-serif;
+  overflow-wrap: break-word;
 }
-main { max-width: 46rem; margin: 0 auto; padding: 24px 16px 56px; }
-h1 { font-size: 1.7rem; line-height: 1.35; font-weight: 700; margin: 8px 0; }
-.card { background: var(--k-card); border-radius: var(--k-card-radius); padding: 20px 16px; margin: 16px 0; }
-h2 { font-size: 1.15rem; font-weight: 700; margin: 0 0 8px; }
-p, ul { margin: 8px 0; }
-ul { padding-left: 1.4em; }
-a { color: var(--k-accent-text); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--k-accent-text); text-underline-offset: 3px; }
 a:hover { color: var(--k-accent-hover); }
-.lead, .hint, footer { color: var(--k-text-muted); }
-.hint { font-size: .875rem; }
-.lang { margin: 0; font-size: .875rem; color: var(--k-text-muted); }
-.cmd { position: relative; margin: 12px 0; }
-.cmd pre {
-  margin: 0;
-  padding: 14px 84px 14px 14px;
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0; }
+strong { color: var(--k-text); }
+:focus-visible { outline: 3px solid var(--k-accent); outline-offset: 3px; }
+
+/* ---- 上の帯 ---- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0 8px;
+}
+.site-name {
+  min-width: 0;
+  font-size: 15px;
+  color: var(--k-text-muted);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 切り替え（frame_ui の drawSegmented: 枠 2px・カプセル・選択中はピンク塗り ＋ ✓） */
+.lang-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  border: 2px solid var(--k-border);
+  border-radius: var(--k-seg-radius);
+  flex: none;
+}
+.lang-switch button {
+  min-width: 84px;
+  min-height: 42px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 17px;
+  color: var(--k-option-text);
+  background: transparent;
+  border: 0;
+  border-radius: 24px;
+  cursor: pointer;
+}
+.lang-switch button:hover { background: var(--k-control-hover); }
+.lang-switch button:active { background: var(--k-control-down); }
+.lang-switch button[aria-pressed="true"] { background: var(--k-accent); color: var(--k-on-accent); font-weight: 700; }
+.lang-switch button[aria-pressed="true"]:hover { background: var(--k-accent-hover); }
+.lang-switch button[aria-pressed="true"]:active { background: var(--k-accent-down); }
+.lang-switch button[aria-pressed="true"]::before { content: "✓ "; }
+
+/* ---- カード・見出し ---- */
+.card {
+  background: var(--k-card);
+  border-radius: var(--k-card-radius);
+  padding: 20px 16px;
+}
+section { margin: 56px 0 0; }
+h1, h2, h3, p, li, dt, dd { word-break: auto-phrase; }
+h2 { font-size: 26px; line-height: 1.4; font-weight: 700; margin: 0 0 4px; }
+.sub { color: var(--k-text-muted); margin: 0 0 16px; }
+h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
+.hint { color: var(--k-text-muted); font-size: 16px; }
+
+/* ---- ファーストビュー ---- */
+.hero { margin-top: 8px; border: 2px solid var(--k-accent); padding: 24px 16px; }
+.hero h1 { font-size: 30px; line-height: 1.35; font-weight: 700; margin: 0 0 8px; }
+.hero .lead { font-size: 19px; color: var(--k-text-soft); margin: 0 0 20px; }
+.hero-cmd {
+  margin: 0 0 12px;
+  padding: 14px 14px;
+  background: var(--k-bg);
+  border: 2px solid var(--k-border);
+  border-radius: var(--k-button-radius);
+}
+.hero-cmd code {
+  display: block;
+  font: 700 16px/1.6 var(--mono);
+  color: var(--k-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  -webkit-user-select: all;
+  user-select: all;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 24px;
+  font: inherit;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+  color: var(--k-text);
   background: var(--k-control);
   border: 2px solid var(--k-border);
   border-radius: var(--k-button-radius);
+  cursor: pointer;
+}
+.btn:hover { background: var(--k-control-hover); color: var(--k-text); }
+.btn:active { background: var(--k-control-down); }
+.copy { color: var(--k-on-accent); background: var(--k-accent); border-color: var(--k-accent); }
+.copy:hover { color: var(--k-on-accent); background: var(--k-accent-hover); border-color: var(--k-accent-hover); }
+.copy:active { background: var(--k-accent-down); border-color: var(--k-accent-down); }
+.copy.ok, .copy.ok:hover { background: var(--k-chip-ok-fill); border-color: var(--k-chip-ok-text); color: var(--k-chip-ok-text); }
+.copy.ng, .copy.ng:hover { background: var(--k-danger-fill); border-color: var(--k-danger-text); color: var(--k-danger-text); }
+.hero .copy { width: 100%; min-height: 64px; font-size: 21px; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; }
+.hero-links .btn { flex: 1 1 200px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.chips li {
+  font-size: 15px;
+  line-height: 1.4;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--k-control);
+  color: var(--k-label-soft);
+}
+.chips li::before { content: "✓ "; color: var(--k-chip-ok-text); font-weight: 700; }
+
+/* ---- 小さいコマンド ＋ コピー ---- */
+.cmd { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.cmd pre {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  background: var(--k-bg);
+  border: 2px solid var(--k-border);
+  border-radius: 12px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
-code { font: .875rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--k-text-soft); }
-.cmd code { white-space: pre; }
-:not(pre) > code { background: var(--k-control); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
-.copy {
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  min-height: 36px;
-  min-width: 68px;
-  padding: 0 12px;
-  font: inherit;
-  font-size: .8rem;
+.cmd code { font: 16px/1.6 var(--mono); color: var(--k-text-soft); white-space: pre; }
+.cmd.wrap-cmd code { white-space: pre-wrap; overflow-wrap: anywhere; -webkit-user-select: all; user-select: all; }
+.cmd .copy { flex: none; min-height: 52px; min-width: 104px; padding: 0 16px; font-size: 17px; }
+:not(pre) > code {
+  font: .9em var(--mono);
+  background: var(--k-control);
+  color: var(--k-text-soft);
+  padding: 1px 7px;
+  border-radius: 6px;
+}
+kbd {
+  display: inline-block;
+  font: 700 .85em/1.5 var(--mono);
+  color: var(--k-text);
+  background: var(--k-control);
+  border: 2px solid var(--k-border);
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  padding: 0 .45em;
+  white-space: nowrap;
+}
+
+/* ---- ステップ ---- */
+.steps { list-style: none; margin: 0; padding: 0; }
+.step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--k-divider);
+}
+.step:first-child { border-top: 0; padding-top: 4px; }
+.step:last-child { padding-bottom: 0; }
+.num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--k-accent);
+  color: var(--k-on-accent);
+  font-size: 22px;
   font-weight: 700;
+  line-height: 1;
+}
+.step-body { grid-column: 1 / -1; min-width: 0; }
+.step-body > :first-child { margin-top: 12px; }
+.step-body ul { padding-left: 1.3em; }
+.step-body li { margin: 4px 0; }
+.caution {
+  margin: 14px 0;
+  padding: 12px 16px;
+  background: var(--k-control);
+  border-left: 4px solid var(--k-accent);
+  border-radius: 8px;
+}
+.caution strong { color: var(--k-accent-text); }
+
+/* ターミナルの再現（テキスト） */
+.term {
+  margin: 14px 0 8px;
+  background: var(--k-bg);
+  border: 2px solid var(--k-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.term-bar {
+  padding: 6px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--k-text-muted);
+  background: var(--k-control);
+  border-bottom: 1px solid var(--k-divider);
+}
+.term pre {
+  margin: 0;
+  padding: 12px 12px 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  font: 13px/1.6 var(--term-mono);
+  color: var(--k-text-soft);
+}
+.term code { font: inherit; color: inherit; background: none; padding: 0; }
+.t-b { font-weight: 700; color: var(--k-text); }
+.t-dim { color: #8f95a1; }
+.t-g { color: var(--k-chip-ok-text); font-weight: 700; }
+.t-in { color: var(--k-accent); font-weight: 700; }
+.t-key {
+  font: 700 12px/1 system-ui, sans-serif;
   color: var(--k-on-accent);
   background: var(--k-accent);
-  border: 0;
-  border-radius: 12px;
-  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 6px;
+  vertical-align: 2px;
 }
-.copy:hover { background: var(--k-accent-hover); }
-.copy:active { background: var(--k-accent-down); }
-.copy.ok { background: var(--k-chip-ok-fill); color: var(--k-chip-ok-text); }
-.copy.ng { background: var(--k-danger-fill); color: var(--k-danger-text); }
-.copy:focus-visible { outline: 2px solid var(--k-text); outline-offset: 2px; }
-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
-th, td { text-align: left; vertical-align: top; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--k-divider); }
-th { font-size: .85rem; color: var(--k-text-muted); font-weight: 700; }
-td:first-child { white-space: nowrap; }
-@media (max-width: 30rem) { td:first-child { white-space: normal; overflow-wrap: anywhere; } }
-.app { padding: 16px 0; border-bottom: 1px solid var(--k-divider); }
-.app:first-of-type { padding-top: 8px; }
-.app video, .app img { display: block; width: 100%; height: auto; border-radius: 12px; background: var(--k-bg); }
-.app h3 { margin: 12px 0 4px; font-size: 1.05rem; }
-.app p { margin: 0; color: var(--k-text-soft); }
-footer { margin: 32px 0 0; font-size: .85rem; }
+.t-omit { font-family: system-ui, sans-serif; font-style: italic; color: var(--k-text-muted); }
+.cursor {
+  display: inline-block;
+  width: .6em;
+  height: 1.1em;
+  vertical-align: -.2em;
+  background: var(--k-text-soft);
+}
+.term-caption { font-size: 16px; color: var(--k-text-muted); margin: 6px 0 0; }
+
+/* 使い方の動画（media/howto.mp4 を置いたら出す） */
+.howto { margin: 0 0 20px; }
+.howto video { display: block; width: 100%; height: auto; border-radius: 12px; background: var(--k-bg); }
+
+/* ---- インストールできるアプリ ---- */
+.apps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.app { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.app video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; background: var(--k-bg); }
+.app-body { padding: 16px 16px 20px; display: flex; flex-direction: column; flex: 1; }
+.app-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.app-num {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 2px solid var(--k-border);
+  color: var(--k-label-soft);
+  white-space: nowrap;
+}
+.app h3 { font-family: var(--mono); font-size: 20px; overflow-wrap: anywhere; }
+.useful {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--k-control);
+  color: var(--k-accent-text);
+  font-weight: 700;
+  line-height: 1.6;
+}
+.useful span.label { display: block; font-size: 14px; font-weight: 700; color: var(--k-text-muted); }
+.app p.desc { color: var(--k-text-soft); margin: 12px 0 0; }
+.app .more { margin: auto 0 0; padding-top: 14px; }
+.app .more .btn { min-height: 48px; font-size: 17px; padding: 0 18px; }
+.sound { color: var(--k-text-muted); font-size: 16px; }
+
+/* ---- 更新・アンインストール ---- */
+.manage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.manage h3 { margin-bottom: 4px; }
+.manage p { margin: 8px 0 0; }
+
+/* ---- 詳しい人向け ---- */
+details.card { padding: 0; }
+details summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px 16px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-right: 3px solid var(--k-accent);
+  border-bottom: 3px solid var(--k-accent);
+  transform: rotate(-45deg);
+  margin: 0 4px;
+  transition: transform .15s;
+}
+details[open] summary::before { transform: rotate(45deg); }
+details summary:hover { background: var(--k-control-hover); border-radius: var(--k-card-radius); }
+.details-body { padding: 0 16px 20px; }
+.details-body h3 { margin: 24px 0 4px; font-size: 18px; }
+.details-body h3:first-child { margin-top: 4px; }
+.details-body ul { padding-left: 1.3em; }
+.details-body li { margin: 6px 0; }
+
+/* ---- 困ったとき ---- */
+.faq { margin: 0; }
+.faq dt { font-weight: 700; padding-top: 18px; border-top: 1px solid var(--k-divider); }
+.faq dt:first-child { padding-top: 0; border-top: 0; }
+.faq dd { margin: 6px 0 18px; color: var(--k-text-soft); }
+.faq dd:last-child { margin-bottom: 0; }
+.faq dd ul { padding-left: 1.3em; margin: 6px 0; }
+.faq dd li { margin: 4px 0; }
+
+footer { margin: 56px 0 0; padding: 24px 0 48px; border-top: 1px solid var(--k-divider); font-size: 15px; color: var(--k-text-muted); }
 footer p { margin: 4px 0; }
+
+@media (min-width: 720px) {
+  .wrap { padding: 0 28px; }
+  .card { padding: 28px; }
+  .app { padding: 0; }
+  .hero { padding: 36px 32px; }
+  .hero h1 { font-size: 38px; }
+  .hero .lead { font-size: 21px; }
+  .hero-cmd-row { display: flex; gap: 12px; align-items: stretch; }
+  .hero-cmd-row .hero-cmd { flex: 1; margin: 0; padding: 16px 18px; display: flex; align-items: center; min-width: 0; }
+  .hero-cmd code { font-size: 19px; }
+  .hero .copy { width: auto; flex: none; min-width: 220px; }
+  .cmd { flex-direction: row; align-items: stretch; }
+  .hero-links .btn { flex: 0 1 auto; }
+  h2 { font-size: 30px; }
+  .step { grid-template-columns: 48px minmax(0, 1fr); column-gap: 18px; align-items: start; }
+  .num { width: 48px; height: 48px; font-size: 24px; }
+  .step h3 { padding-top: 8px; }
+  .step-body { grid-column: 2; }
+  .step-body > :first-child { margin-top: 6px; }
+  .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .app-body { padding: 20px 24px 24px; }
+  details summary { padding: 16px 28px; }
+  .details-body { padding: 0 28px 28px; }
+  .term pre { font-size: 16px; padding: 14px 18px 16px; }
+}
 </style>
 </head>
 <body>
+<div class="wrap">
+
+<header class="topbar">
+  <span class="site-name">frame.sasaken1102s.net</span>
+  <div class="lang-switch" role="group" aria-label="言語 / Language">
+    <button type="button" data-set-lang="ja" aria-pressed="true">日本語</button>
+    <button type="button" data-set-lang="en" aria-pressed="false">English</button>
+  </div>
+</header>
+
 <main>
-<p class="lang"><a href="#english">English is below</a></p>
-<h1>Steam Frame アプリのインストーラー</h1>
-<p class="lead">Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1 行打つだけで入れる・更新する・外すためのスクリプトです。</p>
 
-<section class="card">
-<h2 id="install">入れ方</h2>
-<p>ヘッドセットの Konsole（デスクトップモードのターミナル）で:</p>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh</code></pre><button class="copy" type="button">コピー</button></div>
-<p>アプリの一覧が出るので、番号を選びます（スペースで区切って複数、<code>a</code> で全部、<code>u</code> で外す、<code>q</code> で終わる）。入っているアプリを選ぶと最新版に更新します。聞くのは、そのアプリで選ぶ必要のあることだけです。</p>
-
-</section>
-<section class="card">
-<h2 id="apps">入るアプリ</h2>
-<div class="app">
-<video src="media/frameeyeosc.mp4" poster="media/frameeyeosc.jpg" width="960" height="540" autoplay muted loop playsinline preload="metadata" aria-label="frameeyeosc のデモ動画"></video>
-<h3><a href="https://github.com/sasaken1102r/frameeyeosc">frameeyeosc</a></h3>
-<p>Frame のアイトラッキング（視線とまぶた）を、VRChat のアバターの目に反映します。Steam Link で遊んでいる PC 版 VRChat に OSC で送ります。</p>
+<!-- ファーストビュー: 何のページか ＋ コマンド ＋ コピー -->
+<div class="card hero">
+  <h1><span lang="ja">Steam Frame アプリのインストーラー</span><span lang="en">Steam Frame app installer</span></h1>
+  <p class="lead">
+    <span lang="ja">ヘッドセットの Konsole にこの 1 行を貼り付けて Enter。あとはメニューから選ぶだけで、アプリ 4 つをインストールできます。</span>
+    <span lang="en">Paste this one line into Konsole on your headset and press Enter. Then pick from the menu to install any of four apps.</span>
+  </p>
+  <div class="cmd-box hero-cmd-row">
+    <pre class="hero-cmd"><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
+    <button class="btn copy" type="button"><span lang="ja">コマンドをコピー</span><span lang="en">Copy the command</span></button>
+  </div>
+  <ul class="chips">
+    <li><span lang="ja">sudo・パスワードは要らない</span><span lang="en">No sudo, no password</span></li>
+    <li><span lang="ja">ホームフォルダの中にだけインストール</span><span lang="en">Only writes inside your home folder</span></li>
+    <li><span lang="ja">同じコマンドで更新・アンインストール</span><span lang="en">Same command to update or uninstall</span></li>
+  </ul>
+  <div class="hero-links">
+    <a class="btn" href="#steps"><span lang="ja">はじめての人は：使い方 ↓</span><span lang="en">First time? How to use ↓</span></a>
+    <a class="btn" href="#apps"><span lang="ja">インストールできるアプリを見る ↓</span><span lang="en">See the apps ↓</span></a>
+  </div>
 </div>
-<div class="app">
-<video src="media/frame-jp-keyboard.mp4" poster="media/frame-jp-keyboard.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-jp-keyboard のデモ動画"></video>
-<h3><a href="https://github.com/sasaken1102r/frame-jp-keyboard">frame-jp-keyboard</a></h3>
-<p>Frame の VR キーボードに、スマホと同じ 12 キーのフリック入力とかな漢字変換を付けます。英語は候補つきの QWERTY です。</p>
-</div>
-<div class="app">
-<video src="media/frame-mic-tuner.mp4" poster="media/frame-mic-tuner.jpg" width="1280" height="720" controls playsinline preload="none" aria-label="frame-mic-tuner のデモ動画（音が出ます）"></video>
-<h3><a href="https://github.com/sasaken1102r/frame-mic-tuner">frame-mic-tuner</a></h3>
-<p>マイクのエコー除去とノイズ除去を、SteamVR のダッシュボードから切り替えます。イヤホンとスピーカーでおすすめの設定に一発で変えられます。動画は音が出ます。</p>
-</div>
-<div class="app">
-<video src="media/frame-perf-overlay.mp4" poster="media/frame-perf-overlay.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-perf-overlay のデモ動画"></video>
-<h3><a href="https://github.com/sasaken1102r/frame-perf-overlay">frame-perf-overlay</a></h3>
-<p>フレームレート、CPU・GPU の負荷、温度、電池などを視界の隅に表示します。カクつきや本体の熱さの原因がその場で分かります。</p>
-</div>
-<p class="hint">使う前に、各アプリの README（必要なもの・注意）を読んでください。</p>
 
-</section>
-<section class="card">
-<h2 id="uninstall">外し方</h2>
-<p>上と同じコマンドで、メニューの <code>u</code> から選びます。設定も消すかどうかは聞かれます（既定は残す）。</p>
+<!-- 使い方 -->
+<section id="steps" aria-labelledby="steps-title">
+  <h2 id="steps-title"><span lang="ja">使い方</span><span lang="en">How to use</span></h2>
+  <p class="sub"><span lang="ja">ヘッドセットの中で、上から順に進めれば大丈夫です。</span><span lang="en">Do these on the headset, from top to bottom.</span></p>
 
-</section>
-<section class="card">
-<h2 id="policy">やること・やらないこと</h2>
-<ul>
-<li>各アプリの GitHub の最新リリースから tar.gz と <code>SHA256SUMS</code> をダウンロードし、<strong>SHA-256 が合ったものだけ</strong>を入れます。アーカイブに絶対パスや <code>..</code>、リンクが入っていたら止めます</li>
-<li>展開したリリースの <code>install.sh</code> を実行するだけです。手で <code>./install.sh</code> したときと同じで、出力もそのまま見えます</li>
-<li><strong>sudo は使いません</strong>。書き込むのは<strong>ホームフォルダの中だけ</strong>です（一時フォルダ <code>~/.cache/frame-installer/</code> は終わったら消します）</li>
-<li>入れたあとの更新は、各アプリのパネルやキーボードの更新ボタンからもできます</li>
-</ul>
-<p class="hint"><code>SHA256SUMS</code> は同じリリースに付いているチェックサムで、ダウンロードの破損は防げますが、署名ではありません。</p>
-<p>スクリプトの中身は、ブラウザでは見えないので、<a href="/i">/i</a> で読めます。</p>
+  <div class="card">
+    <!--
+      使い方の動画: site/media/howto.mp4（ポスター site/media/howto.jpg）を置いたら、
+      すぐ下の figure を囲んでいる 2 行（コメントの開始記号だけの行と、「動画ここまで」の行）を消すと出ます。
+    -->
+    <!--
+    <figure class="howto">
+      <video src="media/howto.mp4" poster="media/howto.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストーラーを使っている動画 / Video of using the installer"></video>
+      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ）</span><span lang="en">The whole flow, steps 1 to 5</span></figcaption>
+    </figure>
+    動画ここまで -->
 
-</section>
-<section class="card">
-<h2 id="quiet">質問なしで使う</h2>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="copy" type="button">コピー</button></div>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="copy" type="button">コピー</button></div>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="copy" type="button">コピー</button></div>
-<ul>
-<li>アプリ名は短く <code>eye</code> <code>keyboard</code> <code>mic</code> <code>perf</code> でも、<code>all</code> で全部</li>
-<li><code>--yes</code> 質問にはすべて既定の答えで進む（ターミナルが無いときも同じ）</li>
-<li><code>--lang ja|en</code> 表示の言語（既定はロケール、無ければ Steam の言語設定）</li>
-<li><code>--help</code> 使い方</li>
-</ul>
-<p>入っている版のほうが最新リリースより新しいときは、聞いてから戻します（<code>--yes</code> のときは戻さずにそのまま）。</p>
+    <ol class="steps">
+      <li class="step">
+        <span class="num" aria-hidden="true">1</span>
+        <h3><span lang="ja">このページを Frame のブラウザで開いて、コマンドをコピー</span><span lang="en">Open this page in the Frame's browser and copy the command</span></h3>
+        <div class="step-body">
+          <p><span lang="ja">下のボタン（上のものと同じ）を押します。緑になって「コピーした」と出れば OK です。</span><span lang="en">Press the button below (same as the one at the top). It turns green and says “Copied” when it worked.</span></p>
+          <div class="cmd wrap-cmd">
+            <pre><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
+            <button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button>
+          </div>
+        </div>
+      </li>
 
-</section>
-<section class="card">
-<h2 id="english">English</h2>
-<p>Installs, updates or removes sasaken1102r's four Steam Frame apps with one line in the headset's Konsole:</p>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh</code></pre><button class="copy" type="button">Copy</button></div>
-<p>Pick apps by number from the menu (<code>a</code> all, <code>u</code> remove, <code>q</code> quit). Apps: frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay (links above).</p>
-<p>Without questions:</p>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="copy" type="button">Copy</button></div>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="copy" type="button">Copy</button></div>
-<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="copy" type="button">Copy</button></div>
-<p>Options: <code>--lang ja|en</code>, <code>--help</code>. To remove an app, run the same command and choose <code>u</code>.</p>
-<ul>
-<li>It downloads each app's latest GitHub release with its <code>SHA256SUMS</code>, installs only when the SHA-256 matches, and refuses archives with absolute paths, <code>..</code> or links.</li>
-<li>It just runs the release's own <code>install.sh</code>.</li>
-<li>No sudo. It writes only inside your home folder.</li>
-</ul>
-<p>The script itself is readable at <a href="/i">/i</a>.</p>
+      <li class="step">
+        <span class="num" aria-hidden="true">2</span>
+        <h3><span lang="ja">Konsole を開く</span><span lang="en">Open Konsole</span></h3>
+        <div class="step-body">
+          <!-- TODO: Konsole の開き方 -->
+          <p><span lang="ja">デスクトップモードに切り替えて、アプリの一覧から <strong>Konsole</strong> を開きます。</span><span lang="en">Switch to Desktop Mode and open <strong>Konsole</strong> from the app list.</span></p>
+          <p class="hint"><span lang="ja">Konsole は、文字を打ってコンピューターに指示を出すアプリ（ターミナル）です。</span><span lang="en">Konsole is a terminal: an app where you type commands.</span></p>
+        </div>
+      </li>
 
+      <li class="step">
+        <span class="num" aria-hidden="true">3</span>
+        <h3><span lang="ja">コマンドを貼り付けて Enter</span><span lang="en">Paste the command and press Enter</span></h3>
+        <div class="step-body">
+          <p><span lang="ja">Konsole の中で <strong>右クリック →［貼り付け］</strong>、またはキーボードで <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>。貼り付けたら <kbd>Enter</kbd> を押します。</span><span lang="en">In Konsole, <strong>right-click → Paste</strong>, or press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>. Then press <kbd>Enter</kbd>.</span></p>
+          <p class="caution"><span lang="ja"><strong><kbd>Ctrl</kbd> + <kbd>V</kbd> では貼り付けられません。</strong>Konsole では <kbd>Shift</kbd> も一緒に押します。</span><span lang="en"><strong><kbd>Ctrl</kbd> + <kbd>V</kbd> does not paste in Konsole.</strong> Add <kbd>Shift</kbd>.</span></p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="num" aria-hidden="true">4</span>
+        <h3><span lang="ja">アプリの番号を打って Enter</span><span lang="en">Type the app's number and press Enter</span></h3>
+        <div class="step-body">
+          <p><span lang="ja">こんな一覧が出ます。インストールしたいアプリの番号を打って <kbd>Enter</kbd>。</span><span lang="en">A list like this appears. Type the number of the app you want to install and press <kbd>Enter</kbd>.</span></p>
+          <ul lang="ja">
+            <li>いくつかインストールするときは、スペースで区切る（例: <code>1 4</code>）</li>
+            <li>全部なら <code>a</code>、やめるなら <code>q</code></li>
+            <li>数字は半角で打つ</li>
+          </ul>
+          <ul lang="en">
+            <li>Several apps: separate the numbers with spaces (for example <code>1 4</code>)</li>
+            <li><code>a</code> installs all of them, <code>q</code> quits</li>
+          </ul>
+          <div class="term" lang="ja">
+            <div class="term-bar">Konsole</div>
+<pre><code><span class="t-b">Steam Frame アプリのインストーラー</span>
+
+  1) frameeyeosc          [<span class="t-dim">未インストール</span>]
+     視線とまぶたを OSC で VRChat に送る
+
+  2) frame-jp-keyboard    [<span class="t-dim">未インストール</span>]
+     VR キーボードにフリック入力とかな漢字変換
+
+  3) frame-mic-tuner      [<span class="t-dim">未インストール</span>]
+     マイクのエコー除去・ノイズ除去を切り替える
+
+  4) frame-perf-overlay   [<span class="t-dim">未インストール</span>]
+     フレームレート・温度などを視界の隅に出す
+
+やりたいことを入力して Enter を押してね
+  インストール・更新   アプリの番号（例: 1　複数なら 1 3）
+  全部インストール     a
+  アンインストール     u
+  終了                 q
+（インストール済みのアプリを選ぶと、最新版に更新します）
+&gt; <span class="t-in">1 4</span><span class="cursor"></span></code></pre>
+          </div>
+          <p class="term-caption" lang="ja">はじめてインストールするときの表示です（例: 1 と 4 を選んだところ）。インストール済みのアプリは <code>[インストール済み 0.5.3]</code> のように版も出ます。</p>
+          <div class="term" lang="en">
+            <div class="term-bar">Konsole</div>
+<pre><code><span class="t-b">Steam Frame app installer</span>
+
+  1) frameeyeosc          [<span class="t-dim">not installed</span>]
+     Sends eye gaze and eyelids to VRChat over OSC
+
+  2) frame-jp-keyboard    [<span class="t-dim">not installed</span>]
+     Japanese flick input and kana-kanji conversion for the VR keyboard
+
+  3) frame-mic-tuner      [<span class="t-dim">not installed</span>]
+     Switches the mic echo cancellation and noise suppression
+
+  4) frame-perf-overlay   [<span class="t-dim">not installed</span>]
+     Shows frame rate, temperatures and more in a corner of the view
+
+Type what you want to do and press Enter
+  Install / update   the app's number (e.g. 1, or 1 3 for several)
+  Install all        a
+  Uninstall          u
+  Quit               q
+(Picking an installed app updates it to the latest version)
+&gt; <span class="t-in">1 4</span><span class="cursor"></span></code></pre>
+          </div>
+          <p class="term-caption" lang="en">What you see the first time (here, 1 and 4 are picked). Installed apps also show their version, like <code>[installed 0.5.3]</code>. The menu is in Japanese when the headset is set to Japanese.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="num" aria-hidden="true">5</span>
+        <h3><span lang="ja">質問に答えると、「結果」が出て終わり</span><span lang="en">Answer the questions, then the result appears</span></h3>
+        <div class="step-body">
+          <p><span lang="ja">アプリによっては質問が出ます。<code>y</code>（はい）か <code>n</code>（いいえ）を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけ押すと、かっこの中の「Enter だけなら」の答えになります。迷ったら <kbd>Enter</kbd> で大丈夫です。</span><span lang="en">Some apps ask a question. Type <code>y</code> (yes) or <code>n</code> (no) and press <kbd>Enter</kbd>. Pressing just <kbd>Enter</kbd> gives the answer shown after “Enter =” in the brackets. When unsure, just press <kbd>Enter</kbd>.</span></p>
+          <p><span lang="ja">最後に <code>== 結果 ==</code> が出て、<span class="t-g">OK</span> なら完了です。<code>- </code> で始まる行は、インストールのあとにやることです。</span><span lang="en">At the end <code>== Result ==</code> appears; <span class="t-g">OK</span> means done. Lines starting with <code>- </code> tell you what to do after installing.</span></p>
+          <div class="term" lang="ja">
+            <div class="term-bar">Konsole</div>
+<pre><code><span class="t-b">frameeyeosc</span>
+  最新: 0.5.3（新しくインストール）
+  ダッシュボードのパネルもインストールする？（被ったまま設定を変えられる） （y: はい / n: いいえ。Enter だけなら はい） <span class="t-key">Enter</span>
+
+<span class="t-b">frame-perf-overlay</span>
+  最新: 0.3.0（新しくインストール）
+  SteamVR と一緒に起動する？ （y: はい / n: いいえ。Enter だけなら はい） <span class="t-key">Enter</span>
+
+<span class="t-omit">  （ダウンロードとインストールの表示が続く）</span>
+
+<span class="t-b">== 結果 ==</span>
+  frameeyeosc          <span class="t-g">OK</span> インストールしました 0.5.3
+  frame-perf-overlay   <span class="t-g">OK</span> インストールしました 0.3.0
+
+  - frameeyeosc: PC 側で Steam Link の OSC 送信をオフにしてね（SteamVR の設定 → Steam Link → OSC）</code></pre>
+          </div>
+          <div class="term" lang="en">
+            <div class="term-bar">Konsole</div>
+<pre><code><span class="t-b">frameeyeosc</span>
+  latest: 0.5.3 (new install)
+  Also install the dashboard panel? (change settings in VR) (y = yes / n = no, Enter = yes) <span class="t-key">Enter</span>
+
+<span class="t-b">frame-perf-overlay</span>
+  latest: 0.3.0 (new install)
+  Start it together with SteamVR? (y = yes / n = no, Enter = yes) <span class="t-key">Enter</span>
+
+<span class="t-omit">  (downloading and installing…)</span>
+
+<span class="t-b">== Result ==</span>
+  frameeyeosc          <span class="t-g">OK</span> installed 0.5.3
+  frame-perf-overlay   <span class="t-g">OK</span> installed 0.3.0
+
+  - frameeyeosc: turn off Steam Link's OSC output on your PC (SteamVR settings &gt; Steam Link &gt; OSC)</code></pre>
+          </div>
+          <p class="term-caption"><span lang="ja"><span class="t-key">Enter</span> は、Enter だけ押したところです。Konsole は閉じて大丈夫です。</span><span lang="en"><span class="t-key">Enter</span> marks where just Enter was pressed. You can close Konsole now.</span></p>
+        </div>
+      </li>
+    </ol>
+  </div>
 </section>
-<footer>
-<p>MIT License. 非公式のツールで、Valve とは関係ありません。 / Not affiliated with Valve.</p>
-<p><a href="https://github.com/sasaken1102r/frame">GitHub</a></p>
-</footer>
+
+<!-- インストールできるアプリ -->
+<section id="apps" aria-labelledby="apps-title">
+  <h2 id="apps-title"><span lang="ja">インストールできるアプリ</span><span lang="en">The apps you can install</span></h2>
+  <p class="sub"><span lang="ja">欲しいものだけ選べます。番号はメニューの番号です。使う前に、各アプリの README（必要なもの・注意）を読んでください。</span><span lang="en">Pick only the ones you want. The number is the menu number. Before using an app, read its README (requirements and notes).</span></p>
+
+  <div class="apps">
+    <article class="card app">
+      <video src="media/frameeyeosc.mp4" poster="media/frameeyeosc.jpg" width="960" height="540" autoplay muted loop playsinline preload="metadata" aria-label="frameeyeosc のデモ動画 / demo video"></video>
+      <div class="app-body">
+        <div class="app-head"><span class="app-num"><span lang="ja">番号 1</span><span lang="en">No. 1</span></span><h3>frameeyeosc</h3></div>
+        <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">VRChat のアバターの目を、自分の目と同じように動かしたい</span><span lang="en">Making your VRChat avatar's eyes move like your own</span></p>
+        <p class="desc"><span lang="ja">Frame のアイトラッキング（視線とまぶた）を、VRChat のアバターの目に反映します。Steam Link で遊んでいる PC 版 VRChat に OSC で送ります。</span><span lang="en">Brings the Frame's eye tracking (gaze and eyelids) to your VRChat avatar's eyes. It sends them over OSC to PC VRChat played through Steam Link.</span></p>
+        <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frameeyeosc"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
+      </div>
+    </article>
+
+    <article class="card app">
+      <video src="media/frame-jp-keyboard.mp4" poster="media/frame-jp-keyboard.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-jp-keyboard のデモ動画 / demo video"></video>
+      <div class="app-body">
+        <div class="app-head"><span class="app-num"><span lang="ja">番号 2</span><span lang="en">No. 2</span></span><h3>frame-jp-keyboard</h3></div>
+        <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">VR の中で、スマホみたいに日本語を打ちたい</span><span lang="en">Typing Japanese in VR the way you do on a phone</span></p>
+        <p class="desc"><span lang="ja">Frame の VR キーボードに、スマホと同じ 12 キーのフリック入力とかな漢字変換を付けます。英語は候補つきの QWERTY です。</span><span lang="en">Adds phone-style 12-key flick input and kana-kanji conversion to the Frame's VR keyboard. English uses QWERTY with suggestions.</span></p>
+        <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frame-jp-keyboard"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
+      </div>
+    </article>
+
+    <article class="card app">
+      <video src="media/frame-mic-tuner.mp4" poster="media/frame-mic-tuner.jpg" width="1280" height="720" controls playsinline preload="none" aria-label="frame-mic-tuner のデモ動画（音が出ます） / demo video (with sound)"></video>
+      <div class="app-body">
+        <div class="app-head"><span class="app-num"><span lang="ja">番号 3</span><span lang="en">No. 3</span></span><h3>frame-mic-tuner</h3></div>
+        <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">「声がエコーしてる」「雑音が入る」と言われたとき</span><span lang="en">When people hear an echo or noise from your mic</span></p>
+        <p class="desc"><span lang="ja">マイクのエコー除去とノイズ除去を、SteamVR のダッシュボードから切り替えます。イヤホンとスピーカーでおすすめの設定に一発で変えられます。</span><span lang="en">Switches the mic's echo cancellation and noise suppression from the SteamVR dashboard. One tap sets the recommended settings for earphones or for speakers.</span> <span class="sound"><span lang="ja">動画は音が出ます。</span><span lang="en">The video has sound.</span></span></p>
+        <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frame-mic-tuner"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
+      </div>
+    </article>
+
+    <article class="card app">
+      <video src="media/frame-perf-overlay.mp4" poster="media/frame-perf-overlay.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-perf-overlay のデモ動画 / demo video"></video>
+      <div class="app-body">
+        <div class="app-head"><span class="app-num"><span lang="ja">番号 4</span><span lang="en">No. 4</span></span><h3>frame-perf-overlay</h3></div>
+        <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">カクつく・本体が熱い、その原因をその場で知りたい</span><span lang="en">Seeing on the spot why things stutter or the headset gets hot</span></p>
+        <p class="desc"><span lang="ja">フレームレート、CPU・GPU の負荷、温度、電池などを視界の隅に表示します。カクつきや本体の熱さの原因がその場で分かります。</span><span lang="en">Shows frame rate, CPU and GPU load, temperatures, battery and more in a corner of your view, so you can tell right away why things stutter or get hot.</span></p>
+        <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frame-perf-overlay"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 更新・アンインストール -->
+<section id="manage" aria-labelledby="manage-title">
+  <h2 id="manage-title"><span lang="ja">更新・アンインストール</span><span lang="en">Update or uninstall</span></h2>
+  <p class="sub"><span lang="ja">どちらも、上と同じコマンドを実行するだけです。</span><span lang="en">Both use the same command as above.</span></p>
+  <div class="manage">
+    <div class="card">
+      <h3><span lang="ja">更新</span><span lang="en">Update</span></h3>
+      <p><span lang="ja">メニューで、インストール済みのアプリの番号を選ぶと、最新版に更新されます。各アプリのパネルやキーボードの更新ボタンからも更新できます。</span><span lang="en">In the menu, pick an installed app's number to get the latest version. You can also update from each app's panel or the keyboard's update button.</span></p>
+    </div>
+    <div class="card">
+      <h3><span lang="ja">アンインストール</span><span lang="en">Uninstall</span></h3>
+      <p><span lang="ja">メニューで <code>u</code> を打って <kbd>Enter</kbd>。インストール済みのアプリが出るので、番号を打って <kbd>Enter</kbd>。</span><span lang="en">In the menu, type <code>u</code> and press <kbd>Enter</kbd>. Your installed apps are listed; type the number and press <kbd>Enter</kbd>.</span></p>
+      <div class="term" lang="ja">
+        <div class="term-bar">Konsole</div>
+<pre><code>アンインストール（削除）するアプリの番号を入力して Enter
+（複数なら 1 3 のようにスペースで区切る。やめるなら q）
+  4) frame-perf-overlay   [<span class="t-g">インストール済み 0.3.0</span>]
+&gt; <span class="t-in">4</span><span class="cursor"></span></code></pre>
+      </div>
+      <div class="term" lang="en">
+        <div class="term-bar">Konsole</div>
+<pre><code>Type the number of the app to uninstall and press Enter
+(several: separate with spaces, like 1 3; q to cancel)
+  4) frame-perf-overlay   [<span class="t-g">installed 0.3.0</span>]
+&gt; <span class="t-in">4</span><span class="cursor"></span></code></pre>
+      </div>
+      <p><span lang="ja">「よろしいですか？」と聞かれたら <code>y</code> を打って <kbd>Enter</kbd>（<kbd>Enter</kbd> だけだと、やめます）。アプリによっては設定も消すか聞かれます（<kbd>Enter</kbd> だけなら残します）。</span><span lang="en">When it asks “OK?”, type <code>y</code> and press <kbd>Enter</kbd> (just <kbd>Enter</kbd> cancels). Some apps also ask whether to delete their settings (just <kbd>Enter</kbd> keeps them).</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 困ったとき -->
+<section id="help" aria-labelledby="help-title">
+  <h2 id="help-title"><span lang="ja">困ったとき</span><span lang="en">Troubleshooting</span></h2>
+  <div class="card">
+    <!-- 「」や “” で引用しているメッセージは i の文言（be24b95 時点）。i を変えたら合わせる -->
+    <dl class="faq" lang="ja">
+      <dt>「コマンドが見つかりません」（command not found）と出る</dt>
+      <dd>1 行の一部しか貼り付けられていないかもしれません。このページの［コピー］でもう一度コピーして、Konsole に貼り直してください。手で打つときは <code>|</code>（縦線）まで正確に。</dd>
+
+      <dt>貼り付けられない</dt>
+      <dd><kbd>Ctrl</kbd> + <kbd>V</kbd> ではなく <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>、または右クリック →［貼り付け］です。</dd>
+
+      <dt>結果に「失敗」と出た</dt>
+      <dd>
+        横に理由が出ています。直したら、もう一度同じコマンドを実行してください。
+        <ul>
+          <li>「GitHub につながりません」…ヘッドセットがネットにつながっているか確かめる</li>
+          <li>「ダウンロードできません」「SHA-256 が合わない」…ダウンロードが途中で壊れたかも。そのままもう一度</li>
+          <li>「install.sh が失敗（上の出力を見てね）」…その上に出ている表示に理由があります</li>
+        </ul>
+      </dd>
+
+      <dt>「1〜4 の番号か、a / u / q を入力してね」と出る</dt>
+      <dd>番号は半角で打ってください（全角の「１」は通りません）。いくつか選ぶときはスペースで区切ります。</dd>
+
+      <dt>「root では動かしません」「これは Steam Frame（aarch64）用です」と出て止まった</dt>
+      <dd>コマンドの前に <code>sudo</code> を付けずに、PC ではなくヘッドセットの Konsole で実行してください。</dd>
+
+      <dt>「（y: はい / n: いいえ。…）」で止まっている</dt>
+      <dd>質問の答えを待っています。<code>y</code> か <code>n</code> を打って <kbd>Enter</kbd>。<kbd>Enter</kbd> だけなら、かっこの中の「Enter だけなら」の答えで進みます。</dd>
+    </dl>
+    <dl class="faq" lang="en">
+      <dt>It says “command not found”</dt>
+      <dd>Only part of the line may have been pasted. Copy it again with the Copy button on this page and paste it into Konsole again. If you type it by hand, include the <code>|</code> (vertical bar).</dd>
+
+      <dt>Pasting does nothing</dt>
+      <dd>Use <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd>, not <kbd>Ctrl</kbd> + <kbd>V</kbd>, or right-click → Paste.</dd>
+
+      <dt>The result says “FAILED”</dt>
+      <dd>
+        The reason is shown next to it. After fixing it, run the same command again.
+        <ul>
+          <li>“cannot reach GitHub” … check that the headset is online</li>
+          <li>“download failed” or “SHA-256 mismatch” … the download probably broke; just try again</li>
+          <li>“install.sh failed (see its output above)” … the lines above it tell you why</li>
+        </ul>
+      </dd>
+
+      <dt>It says “Type numbers 1-4, or a / u / q”</dt>
+      <dd>Type the menu numbers; separate several with spaces.</dd>
+
+      <dt>It stopped with “Don't run this as root” or “This is for the Steam Frame (aarch64)”</dt>
+      <dd>Run the command without <code>sudo</code>, in Konsole on the headset (not on your PC).</dd>
+
+      <dt>It is waiting at “(y = yes / n = no, …)”</dt>
+      <dd>It is waiting for your answer. Type <code>y</code> or <code>n</code> and press <kbd>Enter</kbd>. Just <kbd>Enter</kbd> gives the answer shown after “Enter =”.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- 詳しい人向け -->
+<section id="advanced" aria-label="詳しい人向け / For advanced users">
+  <details class="card">
+    <summary><span lang="ja">詳しい人向け（質問なしで使う・オプション・中でやること）</span><span lang="en">For advanced users (no questions, options, what it does)</span></summary>
+    <div class="details-body">
+      <h3><span lang="ja">質問なしで使う</span><span lang="en">Without questions</span></h3>
+      <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
+      <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
+      <div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button></div>
+
+      <h3><span lang="ja">オプション</span><span lang="en">Options</span></h3>
+      <ul lang="ja">
+        <li>アプリ名は短く <code>eye</code> <code>keyboard</code> <code>mic</code> <code>perf</code> でも、<code>all</code> で全部</li>
+        <li><code>--yes</code> 質問にはすべて既定の答えで進む（ターミナルが無いときも同じ）</li>
+        <li><code>--lang ja|en</code> 表示の言語（既定はロケール、無ければ Steam の言語設定）</li>
+        <li><code>--help</code> 使い方</li>
+      </ul>
+      <ul lang="en">
+        <li>App names can be short: <code>eye</code> <code>keyboard</code> <code>mic</code> <code>perf</code>, or <code>all</code></li>
+        <li><code>--yes</code> takes the default answer for every question (also when there is no terminal)</li>
+        <li><code>--lang ja|en</code> language of the messages (default: the locale, else Steam's language setting)</li>
+        <li><code>--help</code> usage</li>
+      </ul>
+      <p><span lang="ja">インストール済みの版のほうが最新リリースより新しいときは、聞いてから戻します（<code>--yes</code> のときは戻さずにそのまま）。</span><span lang="en">If the installed version is newer than the latest release, it asks before going back (with <code>--yes</code> it keeps the installed one).</span></p>
+
+      <h3><span lang="ja">やること・やらないこと</span><span lang="en">What it does and doesn't do</span></h3>
+      <ul lang="ja">
+        <li>各アプリの GitHub の最新リリースから tar.gz と <code>SHA256SUMS</code> をダウンロードし、<strong>SHA-256 が合ったものだけ</strong>をインストールします。アーカイブに絶対パスや <code>..</code>、リンクが入っていたら止めます</li>
+        <li>展開したリリースの <code>install.sh</code> を実行するだけです。手で <code>./install.sh</code> したときと同じで、出力もそのまま見えます</li>
+        <li><strong>sudo は使いません</strong>。書き込むのは<strong>ホームフォルダの中だけ</strong>です（一時フォルダ <code>~/.cache/frame-installer/</code> は終わったら消します）</li>
+        <li><code>SHA256SUMS</code> は同じリリースに付いているチェックサムで、ダウンロードの破損は防げますが、署名ではありません</li>
+      </ul>
+      <ul lang="en">
+        <li>It downloads each app's latest GitHub release (tar.gz) with its <code>SHA256SUMS</code> and installs <strong>only when the SHA-256 matches</strong>. It refuses archives with absolute paths, <code>..</code> or links</li>
+        <li>It just runs the release's own <code>install.sh</code>, the same as running <code>./install.sh</code> by hand, with its output visible</li>
+        <li><strong>No sudo.</strong> It writes <strong>only inside your home folder</strong> (the temporary folder <code>~/.cache/frame-installer/</code> is removed at the end)</li>
+        <li><code>SHA256SUMS</code> comes with the same release: it catches broken downloads, but it is not a signature</li>
+      </ul>
+      <p><span lang="ja">スクリプトの中身は <a href="/i">/i</a> で読めます。</span><span lang="en">You can read the script itself at <a href="/i">/i</a>.</span></p>
+    </div>
+  </details>
+</section>
+
 </main>
+
+<footer>
+  <p><span lang="ja">MIT License。非公式のツールで、Valve とは関係ありません。</span><span lang="en">MIT License. Unofficial; not affiliated with Valve.</span></p>
+  <p><a href="https://github.com/sasaken1102r/frame">GitHub</a></p>
+</footer>
+
+</div>
 <script>
+/** 保存に使う localStorage のキー */
+const LANG_KEY = 'frame-installer-lang';
+
+/** コピーボタンの文言 */
+const COPY_LABELS = {
+  ja: { ok: 'コピーした', ng: '失敗' },
+  en: { ok: 'Copied', ng: 'Failed' },
+};
+
 /**
- * コピーボタンに、直前のコマンドをクリップボードへ入れる処理をつける
+ * 今表示している言語
+ * @returns {'ja'|'en'} 言語
+ */
+const currentLang = () => (document.documentElement.dataset.lang === 'en' ? 'en' : 'ja');
+
+/**
+ * 言語を切り替えて、切り替えの見た目と保存を合わせる
+ * @param {'ja'|'en'} lang - 表示する言語
+ * @param {boolean} save - localStorage に保存するか
+ * @returns {void}
+ */
+const applyLang = (lang, save) => {
+  const root = document.documentElement;
+  root.dataset.lang = lang;
+  root.lang = lang;
+  document.querySelectorAll('[data-set-lang]').forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.setLang === lang));
+  });
+  if (!save) return;
+  try {
+    localStorage.setItem(LANG_KEY, lang);
+  } catch {
+    // 保存できない環境（プライベートモードなど）では、このページを開いている間だけ切り替える
+  }
+};
+
+/**
+ * 言語の切り替えボタンに処理をつける
+ * @returns {void}
+ */
+const setupLangSwitch = () => {
+  applyLang(currentLang(), false);
+  document.querySelectorAll('[data-set-lang]').forEach((button) => {
+    button.addEventListener('click', () => applyLang(button.dataset.setLang === 'en' ? 'en' : 'ja', true));
+  });
+};
+
+/**
+ * クリップボードに文字列を入れる（古いブラウザ向けに execCommand へフォールバック）
+ * @param {string} text - コピーする文字列
+ * @returns {Promise<void>}
+ */
+const copyText = async (text) => {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  const ok = document.execCommand('copy');
+  document.body.removeChild(ta);
+  if (!ok) throw new Error('copy failed');
+};
+
+/**
+ * コピーボタンに、同じ箱の中のコマンドをクリップボードへ入れる処理をつける（成功で緑、失敗で赤）
  * @returns {void}
  */
 const setupCopyButtons = () => {
-  /**
-   * クリップボードに文字列を入れる（古いブラウザ向けに execCommand へフォールバック）
-   * @param {string} text - コピーする文字列
-   * @returns {Promise<void>}
-   */
-  const copyText = async (text) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '0';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    ta.setSelectionRange(0, text.length);
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    if (!ok) throw new Error('copy failed');
-  };
-
-  document.querySelectorAll('.cmd').forEach((box) => {
-    const button = box.querySelector('.copy');
-    const code = box.querySelector('code');
-    if (!button || !code) return;
-    const label = button.textContent;
-    const done = label === 'Copy' ? 'Copied' : 'コピーした';
-    const failed = label === 'Copy' ? 'Failed' : '失敗';
+  document.querySelectorAll('.copy').forEach((button) => {
+    const box = button.parentElement;
+    const code = box && box.querySelector('code');
+    if (!code) return;
+    const idleHtml = button.innerHTML;
+    /** @type {number|undefined} */
+    let timer;
     button.addEventListener('click', async () => {
+      let state = 'ok';
       try {
-        await copyText(code.textContent);
-        button.textContent = done;
-        button.className = 'copy ok';
+        await copyText(code.textContent.trim());
       } catch {
-        button.textContent = failed;
-        button.className = 'copy ng';
+        state = 'ng';
       }
-      setTimeout(() => { button.textContent = label; button.className = 'copy'; }, 1500);
+      button.textContent = COPY_LABELS[currentLang()][state];
+      button.classList.remove('ok', 'ng');
+      button.classList.add(state);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        button.innerHTML = idleHtml;
+        button.classList.remove('ok', 'ng');
+      }, 1500);
     });
   });
 };
 
+setupLangSwitch();
 setupCopyButtons();
 </script>
 </body>
