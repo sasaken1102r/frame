@@ -1,0 +1,14 @@
+{
+  "name": "frame",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "deploy": "node scripts/build.js && wrangler pages deploy dist --project-name=frame-sasaken1102s --branch=main",
+    "dev": "node scripts/build.js && wrangler pages dev dist"
+  },
+  "devDependencies": {
+    "wrangler": "^4.67.0"
+  }
+}

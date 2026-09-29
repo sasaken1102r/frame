@@ -9,7 +9,7 @@ Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1
 ヘッドセットの Konsole（デスクトップモードのターミナル）で:
 
 ```sh
-curl -fsSL https://sasaken1102r.github.io/frame/i | sh
+curl -fsSL https://frame.sasaken1102s.net | sh
 ```
 
 アプリの一覧が出るので、番号を選びます（スペースで区切って複数、`a` で全部、`u` で外す、`q` で終わる）。入っているアプリを選ぶと最新版に更新します。聞くのは、そのアプリで選ぶ必要のあることだけです（frameeyeosc のパネルを入れるか、など）。
@@ -39,9 +39,9 @@ curl -fsSL https://sasaken1102r.github.io/frame/i | sh
 ## 質問なしで使う
 
 ```sh
-curl -fsSL https://sasaken1102r.github.io/frame/i | sh -s -- install eye mic
-curl -fsSL https://sasaken1102r.github.io/frame/i | sh -s -- install all --yes
-curl -fsSL https://sasaken1102r.github.io/frame/i | sh -s -- uninstall perf
+curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic
+curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes
+curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf
 ```
 
 - アプリ名は短く `eye` `keyboard` `mic` `perf` でも、`all` で全部
@@ -62,7 +62,7 @@ MIT。[LICENSE](LICENSE) を参照してください。非公式のツールで�
 Installs, updates or removes sasaken1102r's four Steam Frame apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) with one line in the headset's Konsole:
 
 ```sh
-curl -fsSL https://sasaken1102r.github.io/frame/i | sh
+curl -fsSL https://frame.sasaken1102s.net | sh
 ```
 
 Pick apps by number from the menu (`a` all, `u` remove, `q` quit). Without questions: `... | sh -s -- install eye mic`, `install all --yes`, `uninstall perf`; `--lang ja|en`, `--help`.

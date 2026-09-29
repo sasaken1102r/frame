@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Steam Frame アプリのインストーラー</title>
+<meta name="description" content="Steam Frame 用の自作アプリ 4 つを、Konsole に 1 行打つだけで入れる・更新する・外す。">
+<link rel="icon" href="data:,">
+<style>
+:root {
+  color-scheme: dark;
+  /* tokens named after frame-ui/cpp/frame_ui.h */
+  --k-bg: #0e1015;
+  --k-card: #1a1d24;
+  --k-text: #f2f3f5;
+  --k-text-muted: #a3a9b4;
+  --k-text-soft: #dfe2e7;
+  --k-border: #4a505c;
+  --k-divider: #3a3f4a;
+  --k-control: #20242c;
+  --k-control-hover: #2a2f38;
+  --k-control-down: #343944;
+  --k-accent: #e07ef5;
+  --k-accent-hover: #e99af8;
+  --k-accent-down: #c865de;
+  --k-on-accent: #1c0f22;
+  --k-accent-text: #f0c4fa;
+  --k-chip-ok-text: #4ade80;
+  --k-chip-ok-fill: #173424;
+  --k-danger-text: #ff8a80;
+  --k-danger-fill: #2a1518;
+  --k-card-radius: 18px;
+  --k-button-radius: 16px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--k-bg); }
+body {
+  margin: 0;
+  background: var(--k-bg);
+  color: var(--k-text);
+  font: 16px/1.75 system-ui, -apple-system, "Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", sans-serif;
+}
+main { max-width: 46rem; margin: 0 auto; padding: 24px 16px 56px; }
+h1 { font-size: 1.7rem; line-height: 1.35; font-weight: 700; margin: 8px 0; }
+.card { background: var(--k-card); border-radius: var(--k-card-radius); padding: 20px 16px; margin: 16px 0; }
+h2 { font-size: 1.15rem; font-weight: 700; margin: 0 0 8px; }
+p, ul { margin: 8px 0; }
+ul { padding-left: 1.4em; }
+a { color: var(--k-accent-text); }
+a:hover { color: var(--k-accent-hover); }
+.lead, .hint, footer { color: var(--k-text-muted); }
+.hint { font-size: .875rem; }
+.lang { margin: 0; font-size: .875rem; color: var(--k-text-muted); }
+.cmd { position: relative; margin: 12px 0; }
+.cmd pre {
+  margin: 0;
+  padding: 14px 84px 14px 14px;
+  background: var(--k-control);
+  border: 2px solid var(--k-border);
+  border-radius: var(--k-button-radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+code { font: .875rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--k-text-soft); }
+.cmd code { white-space: pre; }
+:not(pre) > code { background: var(--k-control); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+.copy {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  min-height: 36px;
+  min-width: 68px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--k-on-accent);
+  background: var(--k-accent);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.copy:hover { background: var(--k-accent-hover); }
+.copy:active { background: var(--k-accent-down); }
+.copy.ok { background: var(--k-chip-ok-fill); color: var(--k-chip-ok-text); }
+.copy.ng { background: var(--k-danger-fill); color: var(--k-danger-text); }
+.copy:focus-visible { outline: 2px solid var(--k-text); outline-offset: 2px; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+th, td { text-align: left; vertical-align: top; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--k-divider); }
+th { font-size: .85rem; color: var(--k-text-muted); font-weight: 700; }
+td:first-child { white-space: nowrap; }
+@media (max-width: 30rem) { td:first-child { white-space: normal; overflow-wrap: anywhere; } }
+footer { margin: 32px 0 0; font-size: .85rem; }
+footer p { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+<p class="lang"><a href="#english">English is below</a></p>
+<h1>Steam Frame アプリのインストーラー</h1>
+<p class="lead">Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1 行打つだけで入れる・更新する・外すためのスクリプトです。</p>
+
+<section class="card">
+<h2 id="install">入れ方</h2>
+<p>ヘッドセットの Konsole（デスクトップモードのターミナル）で:</p>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh</code></pre><button class="copy" type="button">コピー</button></div>
+<p>アプリの一覧が出るので、番号を選びます（スペースで区切って複数、<code>a</code> で全部、<code>u</code> で外す、<code>q</code> で終わる）。入っているアプリを選ぶと最新版に更新します。聞くのは、そのアプリで選ぶ必要のあることだけです。</p>
+
+</section>
+<section class="card">
+<h2 id="apps">入るアプリ</h2>
+<table>
+<thead><tr><th>アプリ</th><th>中身</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/sasaken1102r/frameeyeosc">frameeyeosc</a></td><td>視線とまぶたを OSC で VRChat に送る</td></tr>
+<tr><td><a href="https://github.com/sasaken1102r/frame-jp-keyboard">frame-jp-keyboard</a></td><td>VR キーボードにフリック入力とかな漢字変換</td></tr>
+<tr><td><a href="https://github.com/sasaken1102r/frame-mic-tuner">frame-mic-tuner</a></td><td>マイクのエコー除去・ノイズ除去を切り替える</td></tr>
+<tr><td><a href="https://github.com/sasaken1102r/frame-perf-overlay">frame-perf-overlay</a></td><td>フレームレート・温度などを視界の隅に出す</td></tr>
+</tbody>
+</table>
+<p class="hint">使う前に、各アプリの README（必要なもの・注意）を読んでください。</p>
+
+</section>
+<section class="card">
+<h2 id="uninstall">外し方</h2>
+<p>上と同じコマンドで、メニューの <code>u</code> から選びます。設定も消すかどうかは聞かれます（既定は残す）。</p>
+
+</section>
+<section class="card">
+<h2 id="policy">やること・やらないこと</h2>
+<ul>
+<li>各アプリの GitHub の最新リリースから tar.gz と <code>SHA256SUMS</code> をダウンロードし、<strong>SHA-256 が合ったものだけ</strong>を入れます。アーカイブに絶対パスや <code>..</code>、リンクが入っていたら止めます</li>
+<li>展開したリリースの <code>install.sh</code> を実行するだけです。手で <code>./install.sh</code> したときと同じで、出力もそのまま見えます</li>
+<li><strong>sudo は使いません</strong>。書き込むのは<strong>ホームフォルダの中だけ</strong>です（一時フォルダ <code>~/.cache/frame-installer/</code> は終わったら消します）</li>
+<li>入れたあとの更新は、各アプリのパネルやキーボードの更新ボタンからもできます</li>
+</ul>
+<p class="hint"><code>SHA256SUMS</code> は同じリリースに付いているチェックサムで、ダウンロードの破損は防げますが、署名ではありません。</p>
+<p>スクリプトの中身は、ブラウザでは見えないので、<a href="/i">/i</a> で読めます。</p>
+
+</section>
+<section class="card">
+<h2 id="quiet">質問なしで使う</h2>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="copy" type="button">コピー</button></div>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="copy" type="button">コピー</button></div>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="copy" type="button">コピー</button></div>
+<ul>
+<li>アプリ名は短く <code>eye</code> <code>keyboard</code> <code>mic</code> <code>perf</code> でも、<code>all</code> で全部</li>
+<li><code>--yes</code> 質問にはすべて既定の答えで進む（ターミナルが無いときも同じ）</li>
+<li><code>--lang ja|en</code> 表示の言語（既定はロケール、無ければ Steam の言語設定）</li>
+<li><code>--help</code> 使い方</li>
+</ul>
+<p>入っている版のほうが最新リリースより新しいときは、聞いてから戻します（<code>--yes</code> のときは戻さずにそのまま）。</p>
+
+</section>
+<section class="card">
+<h2 id="english">English</h2>
+<p>Installs, updates or removes sasaken1102r's four Steam Frame apps with one line in the headset's Konsole:</p>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh</code></pre><button class="copy" type="button">Copy</button></div>
+<p>Pick apps by number from the menu (<code>a</code> all, <code>u</code> remove, <code>q</code> quit). Apps: frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay (links above).</p>
+<p>Without questions:</p>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic</code></pre><button class="copy" type="button">Copy</button></div>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes</code></pre><button class="copy" type="button">Copy</button></div>
+<div class="cmd"><pre><code>curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf</code></pre><button class="copy" type="button">Copy</button></div>
+<p>Options: <code>--lang ja|en</code>, <code>--help</code>. To remove an app, run the same command and choose <code>u</code>.</p>
+<ul>
+<li>It downloads each app's latest GitHub release with its <code>SHA256SUMS</code>, installs only when the SHA-256 matches, and refuses archives with absolute paths, <code>..</code> or links.</li>
+<li>It just runs the release's own <code>install.sh</code>.</li>
+<li>No sudo. It writes only inside your home folder.</li>
+</ul>
+<p>The script itself is readable at <a href="/i">/i</a>.</p>
+
+</section>
+<footer>
+<p>MIT License. 非公式のツールで、Valve とは関係ありません。 / Not affiliated with Valve.</p>
+<p><a href="https://github.com/sasaken1102r/frame">GitHub</a></p>
+</footer>
+</main>
+<script>
+/**
+ * コピーボタンに、直前のコマンドをクリップボードへ入れる処理をつける
+ * @returns {void}
+ */
+const setupCopyButtons = () => {
+  /**
+   * クリップボードに文字列を入れる（古いブラウザ向けに execCommand へフォールバック）
+   * @param {string} text - コピーする文字列
+   * @returns {Promise<void>}
+   */
+  const copyText = async (text) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (!ok) throw new Error('copy failed');
+  };
+
+  document.querySelectorAll('.cmd').forEach((box) => {
+    const button = box.querySelector('.copy');
+    const code = box.querySelector('code');
+    if (!button || !code) return;
+    const label = button.textContent;
+    const done = label === 'Copy' ? 'Copied' : 'コピーした';
+    const failed = label === 'Copy' ? 'Failed' : '失敗';
+    button.addEventListener('click', async () => {
+      try {
+        await copyText(code.textContent);
+        button.textContent = done;
+        button.className = 'copy ok';
+      } catch {
+        button.textContent = failed;
+        button.className = 'copy ng';
+      }
+      setTimeout(() => { button.textContent = label; button.className = 'copy'; }, 1500);
+    });
+  });
+};
+
+setupCopyButtons();
+</script>
+</body>
+</html>

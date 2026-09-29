@@ -3,9 +3,9 @@
 # Installs, updates or removes sasaken1102r's Steam Frame apps from their latest GitHub releases.
 # Run it on the headset as the normal user, for example in Konsole:
 #
-#   curl -fsSL https://sasaken1102r.github.io/frame/i | sh                         menu
-#   curl -fsSL https://sasaken1102r.github.io/frame/i | sh -s -- install eye mic   no menu
-#   curl -fsSL https://sasaken1102r.github.io/frame/i | sh -s -- uninstall perf
+#   curl -fsSL https://frame.sasaken1102s.net | sh                         menu
+#   curl -fsSL https://frame.sasaken1102s.net | sh -s -- install eye mic   no menu
+#   curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf
 #   ... | sh -s -- --help
 #
 # For each app it downloads the release tar.gz and its SHA256SUMS from GitHub, checks the SHA-256,
@@ -198,7 +198,7 @@ usage() {
         cat <<'EOF'
 Steam Frame アプリのインストーラー（sasaken1102r）
 
-  curl -fsSL https://sasaken1102r.github.io/frame/i | sh
+  curl -fsSL https://frame.sasaken1102s.net | sh
       メニューから選んで入れる・更新する・外す
   ... | sh -s -- install <アプリ>...     入れる・更新する（all で全部）
   ... | sh -s -- uninstall <アプリ>...   外す
@@ -214,7 +214,7 @@ EOF
         cat <<'EOF'
 Installer for sasaken1102r's Steam Frame apps
 
-  curl -fsSL https://sasaken1102r.github.io/frame/i | sh
+  curl -fsSL https://frame.sasaken1102s.net | sh
       pick apps from a menu to install, update or remove
   ... | sh -s -- install <app>...     install or update (all for every app)
   ... | sh -s -- uninstall <app>...   remove
