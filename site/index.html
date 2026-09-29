@@ -281,6 +281,7 @@ h3 { font-size: 20px; line-height: 1.45; font-weight: 700; margin: 0; }
 .read { margin: 24px 0 0; padding-top: 20px; border-top: 1px solid var(--k-divider); }
 .read h2 { font-size: 21px; margin: 0; }
 .read .hint { margin: 4px 0 14px; }
+.src-note { margin: 10px 0 0; font-size: 15px; }
 .tokens { list-style: none; margin: 0; padding: 0; }
 .tok { display: grid; gap: 6px; }
 .tok-key {
@@ -614,6 +615,7 @@ footer p { margin: 4px 0; }
       <button class="btn copy" type="button"><span lang="ja">コピー</span><span lang="en">Copy</span></button>
     </p>
   </div>
+  <p class="hint src-note"><span lang="ja">このコマンドで実行されるコードは、GitHub の <a href="https://github.com/sasaken1102r/frame">sasaken1102r/frame</a> で公開しています。中身を確かめてから使えます。</span><span lang="en">The code this command runs is published on GitHub at <a href="https://github.com/sasaken1102r/frame">sasaken1102r/frame</a>, so you can check it before using it.</span></p>
 
   <div class="read" id="read">
     <h2><span lang="ja">コマンドの読み方</span><span lang="en">How to read the command</span></h2>
@@ -1021,7 +1023,7 @@ Type what you want to do and press Enter
         <li><strong>No sudo.</strong> It writes <strong>only inside your home folder</strong> (the temporary folder <code>~/.cache/frame-installer/</code> is removed at the end)</li>
         <li><code>SHA256SUMS</code> comes with the same release: it catches broken downloads, but it is not a signature</li>
       </ul>
-      <p><span lang="ja">スクリプトの中身は <a href="/i">/i</a> で読めます。</span><span lang="en">You can read the script itself at <a href="/i">/i</a>.</span></p>
+      <p><span lang="ja">実行されるコードは GitHub の <a href="https://github.com/sasaken1102r/frame">sasaken1102r/frame</a>（ファイル <code>i</code>）を参照してください。いま配っている中身そのものは <a href="/i">/i</a> で読めます。各アプリのコードは、それぞれのリポジトリ（上の「GitHub で詳しく見る」）にあります。</span><span lang="en">See <a href="https://github.com/sasaken1102r/frame">sasaken1102r/frame</a> on GitHub (the file <code>i</code>) for the code that runs. The exact script being served is at <a href="/i">/i</a>. Each app's code is in its own repository (“Details on GitHub” on each app above).</span></p>
     </div>
   </details>
 </section>
@@ -1030,7 +1032,7 @@ Type what you want to do and press Enter
 
 <footer>
   <p><span lang="ja">MIT License。非公式のツールで、Valve とは関係ありません。</span><span lang="en">MIT License. Unofficial; not affiliated with Valve.</span></p>
-  <p><a href="https://github.com/sasaken1102r/frame">GitHub</a></p>
+  <p><a href="https://github.com/sasaken1102r/frame"><span lang="ja">ソースコード（GitHub）</span><span lang="en">Source code (GitHub)</span></a></p>
 </footer>
 
 </div>
