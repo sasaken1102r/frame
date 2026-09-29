@@ -91,6 +91,11 @@ th, td { text-align: left; vertical-align: top; padding: 8px 8px 8px 0; border-b
 th { font-size: .85rem; color: var(--k-text-muted); font-weight: 700; }
 td:first-child { white-space: nowrap; }
 @media (max-width: 30rem) { td:first-child { white-space: normal; overflow-wrap: anywhere; } }
+.app { padding: 16px 0; border-bottom: 1px solid var(--k-divider); }
+.app:first-of-type { padding-top: 8px; }
+.app video, .app img { display: block; width: 100%; height: auto; border-radius: 12px; background: var(--k-bg); }
+.app h3 { margin: 12px 0 4px; font-size: 1.05rem; }
+.app p { margin: 0; color: var(--k-text-soft); }
 footer { margin: 32px 0 0; font-size: .85rem; }
 footer p { margin: 4px 0; }
 </style>
@@ -110,15 +115,26 @@ footer p { margin: 4px 0; }
 </section>
 <section class="card">
 <h2 id="apps">入るアプリ</h2>
-<table>
-<thead><tr><th>アプリ</th><th>中身</th></tr></thead>
-<tbody>
-<tr><td><a href="https://github.com/sasaken1102r/frameeyeosc">frameeyeosc</a></td><td>視線とまぶたを OSC で VRChat に送る</td></tr>
-<tr><td><a href="https://github.com/sasaken1102r/frame-jp-keyboard">frame-jp-keyboard</a></td><td>VR キーボードにフリック入力とかな漢字変換</td></tr>
-<tr><td><a href="https://github.com/sasaken1102r/frame-mic-tuner">frame-mic-tuner</a></td><td>マイクのエコー除去・ノイズ除去を切り替える</td></tr>
-<tr><td><a href="https://github.com/sasaken1102r/frame-perf-overlay">frame-perf-overlay</a></td><td>フレームレート・温度などを視界の隅に出す</td></tr>
-</tbody>
-</table>
+<div class="app">
+<video src="media/frameeyeosc.mp4" poster="media/frameeyeosc.jpg" width="960" height="540" autoplay muted loop playsinline preload="metadata" aria-label="frameeyeosc のデモ動画"></video>
+<h3><a href="https://github.com/sasaken1102r/frameeyeosc">frameeyeosc</a></h3>
+<p>Frame のアイトラッキング（視線とまぶた）を、VRChat のアバターの目に反映します。Steam Link で遊んでいる PC 版 VRChat に OSC で送ります。</p>
+</div>
+<div class="app">
+<img src="media/frame-jp-keyboard.png" width="1281" height="359" alt="12 キーのフリック配列と変換候補の欄" loading="lazy">
+<h3><a href="https://github.com/sasaken1102r/frame-jp-keyboard">frame-jp-keyboard</a></h3>
+<p>Frame の VR キーボードに、スマホと同じ 12 キーのフリック入力とかな漢字変換を付けます。英語は候補つきの QWERTY です。</p>
+</div>
+<div class="app">
+<video src="media/frame-mic-tuner.mp4" poster="media/frame-mic-tuner.jpg" width="1280" height="720" controls playsinline preload="none" aria-label="frame-mic-tuner のデモ動画（音が出ます）"></video>
+<h3><a href="https://github.com/sasaken1102r/frame-mic-tuner">frame-mic-tuner</a></h3>
+<p>マイクのエコー除去とノイズ除去を、SteamVR のダッシュボードから切り替えます。イヤホンとスピーカーでおすすめの設定に一発で変えられます。動画は音が出ます。</p>
+</div>
+<div class="app">
+<video src="media/frame-perf-overlay.mp4" poster="media/frame-perf-overlay.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-perf-overlay のデモ動画"></video>
+<h3><a href="https://github.com/sasaken1102r/frame-perf-overlay">frame-perf-overlay</a></h3>
+<p>フレームレート、CPU・GPU の負荷、温度、電池などを視界の隅に表示します。カクつきや本体の熱さの原因がその場で分かります。</p>
+</div>
 <p class="hint">使う前に、各アプリの README（必要なもの・注意）を読んでください。</p>
 
 </section>
