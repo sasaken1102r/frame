@@ -1,0 +1,4 @@
+* text=auto eol=lf
+# The installer is run with `curl ... | sh`: a CR at a line end would break it
+i text eol=lf
+*.png binary
