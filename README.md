@@ -1,10 +1,10 @@
 # Steam Frame アプリのインストーラー
 
-Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1 行打つだけで入れる・更新する・外すためのスクリプトです。
+Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1 行打つだけでインストール・更新・アンインストール（削除）するためのスクリプトです。
 
 [English below](#english)
 
-## 入れ方
+## インストールのしかた
 
 ヘッドセットの Konsole（デスクトップモードのターミナル）で:
 
@@ -12,7 +12,7 @@ Steam Frame 用の自作アプリ 4 つを、ヘッドセットの Konsole に 1
 curl -fsSL https://frame.sasaken1102s.net | sh
 ```
 
-アプリの一覧が出るので、番号を選びます（スペースで区切って複数、`a` で全部、`u` で外す、`q` で終わる）。入っているアプリを選ぶと最新版に更新します。聞くのは、そのアプリで選ぶ必要のあることだけです（frameeyeosc のパネルを入れるか、など）。
+アプリの一覧が出るので、インストールしたいアプリの番号を入力して Enter を押します（複数なら `1 3` のようにスペースで区切る、`a` で全部、`u` でアンインストール、`q` で終了）。インストール済みのアプリを選ぶと最新版に更新します。聞くのは、そのアプリで選ぶ必要のあることだけです（frameeyeosc のパネルもインストールするか、など）。
 
 | アプリ | 中身 |
 |---|---|
@@ -23,16 +23,16 @@ curl -fsSL https://frame.sasaken1102s.net | sh
 
 使う前に、各アプリの README（必要なもの・注意）を読んでください。
 
-## 外し方
+## アンインストール（削除）のしかた
 
 上と同じコマンドで、メニューの `u` から選びます。設定も消すかどうかは聞かれます（既定は残す）。
 
 ## やること・やらないこと
 
-- 各アプリの GitHub の最新リリースから tar.gz と `SHA256SUMS` をダウンロードし、**SHA-256 が合ったものだけ**を入れます。アーカイブに絶対パスや `..`、リンクが入っていたら止めます
+- 各アプリの GitHub の最新リリースから tar.gz と `SHA256SUMS` をダウンロードし、**SHA-256 が合ったものだけ**をインストールします。アーカイブに絶対パスや `..`、リンクが入っていたら止めます
 - 展開したリリースの `install.sh` を実行するだけです。入る場所・入るものは、手で `./install.sh` したときと同じです（出力もそのまま見えます）
 - **sudo は使いません**。書き込むのは**ホームフォルダの中だけ**です（一時フォルダ `~/.cache/frame-installer/` は終わったら消します）
-- 入れたあとの更新は、各アプリのパネルやキーボードの更新ボタンからもできます
+- インストールしたあとの更新は、各アプリのパネルやキーボードの更新ボタンからもできます
 
 `SHA256SUMS` は同じリリースに付いているチェックサムで、ダウンロードの破損は防げますが、署名ではありません。
 
@@ -49,7 +49,7 @@ curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf
 - `--lang ja|en` 表示の言語（既定はロケール、無ければ Steam の言語設定）
 - `--help` 使い方
 
-入っている版のほうが最新リリースより新しいときは、聞いてから戻します（`--yes` のときは戻さずにそのまま）。
+インストール済みの版のほうが最新リリースより新しいときは、聞いてから戻します（`--yes` のときは戻さずにそのまま）。
 
 ## ライセンス
 
@@ -59,12 +59,12 @@ MIT。[LICENSE](LICENSE) を参照してください。非公式のツールで�
 
 ## English
 
-Installs, updates or removes sasaken1102r's four Steam Frame apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) with one line in the headset's Konsole:
+Installs, updates or uninstalls sasaken1102r's four Steam Frame apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) with one line in the headset's Konsole:
 
 ```sh
 curl -fsSL https://frame.sasaken1102s.net | sh
 ```
 
-Pick apps by number from the menu (`a` all, `u` remove, `q` quit). Without questions: `... | sh -s -- install eye mic`, `install all --yes`, `uninstall perf`; `--lang ja|en`, `--help`.
+Pick apps by number from the menu (`a` install all, `u` uninstall, `q` quit). Without questions: `... | sh -s -- install eye mic`, `install all --yes`, `uninstall perf`; `--lang ja|en`, `--help`.
 
 It downloads each app's latest GitHub release with its `SHA256SUMS`, installs only when the SHA-256 matches, refuses archives with absolute paths, `..` or links, and runs the release's own `install.sh`. No sudo; it writes only inside your home folder. MIT licensed. Not affiliated with Valve.

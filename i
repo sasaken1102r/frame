@@ -155,7 +155,11 @@ read_tty() { # prompt
 # Ask a yes/no question; DEFAULT (y or n) is the answer on Enter, and without questions (--yes or
 # no terminal). True for yes.
 ask_yn() { # question default
-    if [ "$2" = y ]; then _hint='[Y/n]'; else _hint='[y/N]'; fi
+    if [ "$2" = y ]; then
+        _hint=$(t '（y: はい / n: いいえ。Enter だけなら はい）' '(y = yes / n = no, Enter = yes)')
+    else
+        _hint=$(t '（y: はい / n: いいえ。Enter だけなら いいえ）' '(y = yes / n = no, Enter = no)')
+    fi
     if [ "$interactive" != 1 ]; then
         printf '%s %s %s\n' "$1" "$_hint" "$2"
         [ "$2" = y ]
@@ -199,25 +203,25 @@ usage() {
 Steam Frame アプリのインストーラー（sasaken1102r）
 
   curl -fsSL https://frame.sasaken1102s.net | sh
-      メニューから選んで入れる・更新する・外す
-  ... | sh -s -- install <アプリ>...     入れる・更新する（all で全部）
-  ... | sh -s -- uninstall <アプリ>...   外す
+      メニューから選んでインストール・更新・アンインストール
+  ... | sh -s -- install <アプリ>...     インストール・更新（all で全部）
+  ... | sh -s -- uninstall <アプリ>...   アンインストール（削除）
 
 アプリ: frameeyeosc (eye)、frame-jp-keyboard (keyboard)、
         frame-mic-tuner (mic)、frame-perf-overlay (perf)、all
   --yes, -y      質問にはすべて既定の答えで進む
   --lang ja|en   表示の言語
   --help, -h     これを出す
-sudo は使わず、ホームフォルダの中にだけ入れます。
+sudo は使わず、ホームフォルダの中にだけインストールします。
 EOF
     else
         cat <<'EOF'
 Installer for sasaken1102r's Steam Frame apps
 
   curl -fsSL https://frame.sasaken1102s.net | sh
-      pick apps from a menu to install, update or remove
+      pick apps from a menu to install, update or uninstall
   ... | sh -s -- install <app>...     install or update (all for every app)
-  ... | sh -s -- uninstall <app>...   remove
+  ... | sh -s -- uninstall <app>...   uninstall
 
 Apps: frameeyeosc (eye), frame-jp-keyboard (keyboard),
       frame-mic-tuner (mic), frame-perf-overlay (perf), all
@@ -440,7 +444,7 @@ fetch_release() { # dir
     say "  $_name をダウンロード中..." "  downloading $_name..."
     download "$_base/$_name" "$1/$_name" 600 || return 1
     download "$_base/SHA256SUMS" "$1/SHA256SUMS" 60 || {
-        err=$(t "SHA256SUMS が取れない（照合できないので入れません）" "no SHA256SUMS (can't verify, not installing)")
+        err=$(t "SHA256SUMS が取れない（照合できないのでインストールしません）" "no SHA256SUMS (can't verify, not installing)")
         return 1
     }
     verify_sha256 "$1/$_name" "$_name" "$1/SHA256SUMS" || return 1
@@ -466,7 +470,7 @@ fetch_release() { # dir
         fi
     fi
     if [ -z "$installer_dir" ]; then
-        err=$(t "install.sh が入っていない" "no install.sh in the release")
+        err=$(t "リリースに install.sh が入っていない" "no install.sh in the release")
         return 1
     fi
 }
@@ -529,15 +533,15 @@ plan_install() { # app
         _inst=$(installed_version "$_app")
         # Never go back to an older version without asking (a build newer than the release)
         if [ -n "$_inst" ] && [ "$(vercmp "$(version_core "$_inst")" "$(version_core "$version")")" = 1 ]; then
-            if ! ask_yn "$(t "  入っている $_inst のほうが最新リリース $version より新しい。$version に戻す？" \
+            if ! ask_yn "$(t "  インストール済みの $_inst のほうが最新リリース $version より新しい。$version に戻す？" \
                 "  The installed $_inst is newer than the latest release $version. Go back to $version?")" n; then
                 add_result "$_app" skip "$(t "$_inst のまま" "kept $_inst")"
                 return 1
             fi
         fi
-        say "  入っている版: ${_inst:-?} → 最新: $version" "  installed: ${_inst:-?} -> latest: $version"
+        say "  インストール済み: ${_inst:-?} → 最新: $version（更新）" "  installed: ${_inst:-?} -> latest: $version (update)"
     else
-        say "  最新: $version（新しく入れる）" "  latest: $version (new install)"
+        say "  最新: $version（新しくインストール）" "  latest: $version (new install)"
     fi
     _opts=
     load_app "$_app"
@@ -546,13 +550,13 @@ plan_install() { # app
             if [ -x "$bin_dir/frameeyeosc-panel" ]; then
                 # Without --with-panel an installed panel would stay at its old version
                 _opts=--with-panel
-                say "  パネル: 入っているので一緒に更新" "  panel: installed, updated too"
+                say "  パネル: インストール済みなので一緒に更新" "  panel: installed, updated too"
             else
                 _def=y
                 if [ -f "$config_home/frameeyeosc/install-args" ] && ! args_file_has frameeyeosc --with-panel; then
                     _def=n
                 fi
-                if ask_yn "$(t '  ダッシュボードのパネルも入れる？（被ったまま設定を変えられる）' \
+                if ask_yn "$(t '  ダッシュボードのパネルもインストールする？（被ったまま設定を変えられる）' \
                     '  Also install the dashboard panel? (change settings in VR)')" "$_def"; then
                     _opts=--with-panel
                 fi
@@ -600,7 +604,11 @@ do_install() { # app
     fi
     # shellcheck disable=SC2086 # the options are single words
     if run_install_sh $_opts; then
-        add_result "$_app" ok "$version"
+        if [ "$_had" = 1 ]; then
+            add_result "$_app" ok "$(t "更新しました $version" "updated to $version")"
+        else
+            add_result "$_app" ok "$(t "インストールしました $version" "installed $version")"
+        fi
         if [ "$_had" = 0 ]; then
             case $_app in
                 frameeyeosc) add_note "$(t 'frameeyeosc: PC 側で Steam Link の OSC 送信をオフにしてね（SteamVR の設定 → Steam Link → OSC）' \
@@ -636,11 +644,11 @@ uninstall_apps() { # apps...
         if is_installed "$_a"; then
             _todo="$_todo $_a"
         else
-            add_result "$_a" skip "$(t '入っていない' 'not installed')"
+            add_result "$_a" skip "$(t '未インストール' 'not installed')"
         fi
     done
     [ -n "$_todo" ] || return 0
-    if [ "$interactive" = 1 ] && ! ask_yn "$(t "外す:$_todo。いい？" "Remove:$_todo. OK?")" n; then
+    if [ "$interactive" = 1 ] && ! ask_yn "$(t "アンインストールします:$_todo。よろしいですか？" "Uninstall:$_todo. OK?")" n; then
         say "やめました。" "Cancelled."
         return 0
     fi
@@ -659,7 +667,7 @@ uninstall_apps() { # apps...
     for _a in $_todo; do
         _n=$(app_number "$_a")
         load_app "$_a"
-        heading "$(t "$_a を外す" "Removing $_a")"
+        heading "$(t "$_a をアンインストール" "Uninstalling $_a")"
         if ! latest_release || ! fetch_release "$work/$_a"; then
             add_result "$_a" fail "$err"
             continue
@@ -673,7 +681,7 @@ uninstall_apps() { # apps...
         if [ $? -ne 0 ]; then
             add_result "$_a" fail "$(t "install.sh が失敗（上の出力を見てね）" "install.sh failed (see its output above)")"
         else
-            add_result "$_a" ok "$(t '外しました' 'removed')"
+            add_result "$_a" ok "$(t 'アンインストールしました' 'uninstalled')"
             case $_a in
                 frame-jp-keyboard) add_note "$(t 'frame-jp-keyboard: Steam を再起動（かヘッドセットを再起動）すると、純正キーボードに完全に戻る' \
                     'frame-jp-keyboard: restart Steam (or the headset) to fully get the stock keyboard back')" ;;
@@ -694,22 +702,26 @@ uninstall_apps() { # apps...
 status_text() { # app
     if is_installed "$1"; then
         _v=$(installed_version "$1")
-        printf '%s%s%s' "$c_green" "$(t "入っている${_v:+ $_v}" "installed${_v:+ $_v}")" "$c_off"
+        printf '%s%s%s' "$c_green" "$(t "インストール済み${_v:+ $_v}" "installed${_v:+ $_v}")" "$c_off"
     else
-        printf '%s%s%s' "$c_dim" "$(t '入っていない' 'not installed')" "$c_off"
+        printf '%s%s%s' "$c_dim" "$(t '未インストール' 'not installed')" "$c_off"
     fi
 }
 
 menu() {
     printf '\n%s%s%s\n' "$c_bold" "$(t 'Steam Frame アプリのインストーラー' "Steam Frame app installer")" "$c_off"
     for _a in $all_apps; do
-        printf '\n  %s) %s  [%s]\n' "$(app_number "$_a")" "$_a" "$(status_text "$_a")"
+        printf '\n  %s) %-20s [%s]\n' "$(app_number "$_a")" "$_a" "$(status_text "$_a")"
         printf '     %s\n' "$(app_desc "$_a")"
     done
     echo
-    say "番号で選ぶ（スペースで区切って複数OK。入っているものは最新に更新）" \
-        "Pick by number (several with spaces; installed ones are updated)"
-    say "  a: 全部  u: 外す  q: 終わる" "  a: all  u: remove  q: quit"
+    say "やりたいことを入力して Enter を押してね" "Type what you want to do and press Enter"
+    say "  インストール・更新   アプリの番号（例: 1　複数なら 1 3）" \
+        "  Install / update   the app's number (e.g. 1, or 1 3 for several)"
+    say "  全部インストール     a" "  Install all        a"
+    say "  アンインストール     u" "  Uninstall          u"
+    say "  終了                 q" "  Quit               q"
+    say "（インストール済みのアプリを選ぶと、最新版に更新します）" "(Picking an installed app updates it to the latest version)"
     while :; do
         read_tty '> ' || { echo; return 0; }
         _words=$(printf '%s' "$reply" | tr ',' ' ')
@@ -731,7 +743,7 @@ menu() {
             install_apps $_picked
             return
         fi
-        say "1〜4 の番号か a / u / q を入れてね" "Type numbers 1-4, or a / u / q"
+        say "1〜4 の番号か、a / u / q を入力してね" "Type numbers 1-4, or a / u / q"
     done
 }
 
@@ -753,13 +765,14 @@ uninstall_menu() {
         is_installed "$_a" && _inst="$_inst $_a"
     done
     if [ -z "$_inst" ]; then
-        say "入っているアプリはありません。" "No app is installed."
+        say "インストール済みのアプリはありません。" "No app is installed."
         return 0
     fi
     echo
-    say "外すアプリの番号（スペースで区切って複数OK。q: やめる）" "Number(s) of the app(s) to remove (q: cancel)"
+    say "アンインストール（削除）するアプリの番号を入力して Enter" "Type the number of the app to uninstall and press Enter"
+    say "（複数なら 1 3 のようにスペースで区切る。やめるなら q）" "(several: separate with spaces, like 1 3; q to cancel)"
     for _a in $_inst; do
-        printf '  %s) %s  [%s]\n' "$(app_number "$_a")" "$_a" "$(status_text "$_a")"
+        printf '  %s) %-20s [%s]\n' "$(app_number "$_a")" "$_a" "$(status_text "$_a")"
     done
     while :; do
         read_tty '> ' || { echo; return 0; }
@@ -783,7 +796,7 @@ uninstall_menu() {
                 return
             fi
         fi
-        say "上の番号か q を入れてね" "Type numbers from the list, or q"
+        say "上の番号か、q を入力してね" "Type numbers from the list, or q"
     done
 }
 
