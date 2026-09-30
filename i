@@ -803,6 +803,21 @@ uninstall_menu() {
 # ---------------------------------------------------------------------------------------------
 # Start
 
+# The Frame's Desktop Mode (steamos-nested-desktop) runs a nested Plasma with XDG_RUNTIME_DIR moved to
+# .../nested_plasma and its own D-Bus, so `systemctl --user` there cannot reach the user's systemd
+# ("Failed to connect to user scope bus"). Point both back at the real session for us and install.sh.
+use_real_user_session() {
+    _real="/run/user/$(id -u)"
+    [ -S "${XDG_RUNTIME_DIR:-}/systemd/private" ] && return 0
+    [ -S "$_real/systemd/private" ] || return 0
+    XDG_RUNTIME_DIR=$_real
+    export XDG_RUNTIME_DIR
+    if [ -S "$_real/bus" ]; then
+        DBUS_SESSION_BUS_ADDRESS="unix:path=$_real/bus"
+        export DBUS_SESSION_BUS_ADDRESS
+    fi
+}
+
 # Stop on the wrong machine or user, and check the tools.
 preflight() {
     if [ "$(id -u)" = 0 ]; then
@@ -920,6 +935,7 @@ main() {
     fi
 
     preflight
+    use_real_user_session
     mkdir -p "$cache_base" || die "$cache_base を作れません" "Cannot create $cache_base"
     trap cleanup EXIT
     trap 'exit 129' HUP
