@@ -666,8 +666,10 @@ footer p { margin: 4px 0; }
 
   <div class="card">
     <figure class="howto">
-      <video src="media/howto_2026-09-29_23-40-37.mp4" poster="media/howto_2026-09-29_23-40-37.jpg" width="1280" height="720" controls playsinline preload="metadata" aria-label="インストールのしかたの動画 / Video of how to install"></video>
-      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ、約 1 分）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 5 (about a minute). The video skips the typing.</span></figcaption>
+      <!-- 言語ごとにテロップの違う動画。隠れている方を読み込まないよう preload="none"（ポスターは出る） -->
+      <video lang="ja" src="media/howto_2026-09-29_23-40-37.mp4" poster="media/howto_2026-09-29_23-40-37.jpg" width="1280" height="720" controls playsinline preload="none" aria-label="インストールのしかたの動画"></video>
+      <video lang="en" src="media/howto-en_2026-09-30_21-52-09.mp4" poster="media/howto-en_2026-09-30_21-52-09.jpg" width="1280" height="720" controls playsinline preload="none" aria-label="Video of how to install"></video>
+      <figcaption class="term-caption"><span lang="ja">実際に使っているところ（1 から 5 までの流れ、約 1 分）。動画では入力の部分を省略しています。</span><span lang="en">The whole flow, steps 1 to 5 (about a minute). The video skips the typing, and the headset in it is set to Japanese.</span></figcaption>
     </figure>
 
     <ol class="steps">
@@ -1064,6 +1066,10 @@ const applyLang = (lang, save) => {
   root.lang = lang;
   document.querySelectorAll('[data-set-lang]').forEach((button) => {
     button.setAttribute('aria-pressed', String(button.dataset.setLang === lang));
+  });
+  // 隠れた言語の動画が裏で再生され続けないように止める
+  document.querySelectorAll('video[lang]').forEach((video) => {
+    if (video.lang !== lang) video.pause();
   });
   if (!save) return;
   try {
