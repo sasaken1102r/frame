@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>ささけん＠の Steam Frame アプリ｜インストールのしかた</title>
-<meta name="description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole でコマンドを入力してメニューから選ぶだけで入れられます。無料。VRChat へのアイトラッキング送信、日本語フリック入力、マイク調整、fps 表示。">
+<meta name="description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame（SteamOS）用の非公式アプリ 5 つを、Konsole でコマンドを入力してメニューから選ぶだけで入れられます。無料。VRChat へのアイトラッキング送信、日本語フリック入力、マイク調整、fps 表示、aux ボタンのショートカット。">
 <link rel="canonical" href="https://frame.sasaken1102s.net/">
 <meta name="theme-color" content="#0e1015">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ささけん＠の Steam Frame アプリ">
 <meta property="og:title" content="ささけん＠の Steam Frame アプリ｜インストールのしかた">
-<meta property="og:description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の非公式アプリ 4 つ（アイトラッキングの VRChat 送信・日本語フリック入力・マイク調整・fps 表示）を、Konsole のメニューから選んで入れられます。無料。">
+<meta property="og:description" content="PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の非公式アプリ 5 つ（アイトラッキングの VRChat 送信・日本語フリック入力・マイク調整・fps 表示・aux ボタンのショートカット）を、Konsole のメニューから選んで入れられます。無料。">
 <meta property="og:url" content="https://frame.sasaken1102s.net/">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:locale:alternate" content="en_US">
@@ -36,7 +36,7 @@
       "url": "https://frame.sasaken1102s.net/",
       "name": "ささけん＠の Steam Frame アプリ",
       "alternateName": "Steam Frame apps by sasaken@",
-      "description": "Steam Frame（SteamOS）用の非公式アプリ 4 つを、Konsole でコマンドを入力し、メニューから選んでインストール・更新・アンインストールできる無料のアプリ集。PC なしで、Frame の中だけで手短にインストールできます。",
+      "description": "Steam Frame（SteamOS）用の非公式アプリ 5 つを、Konsole でコマンドを入力し、メニューから選んでインストール・更新・アンインストールできる無料のアプリ集。PC なしで、Frame の中だけで手短にインストールできます。",
       "inLanguage": ["ja", "en"],
       "author": { "@id": "https://github.com/sasaken1102r#person" }
     },
@@ -91,6 +91,18 @@
       "name": "frame-perf-overlay",
       "description": "Steam Frame のフレームレート、CPU・GPU の負荷、温度、電池などを視界の隅に表示する。",
       "url": "https://github.com/sasaken1102r/frame-perf-overlay",
+      "operatingSystem": "SteamOS",
+      "applicationCategory": "UtilitiesApplication",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+      "author": { "@id": "https://github.com/sasaken1102r#person" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "frame-aux-shortcuts",
+      "description": "Steam Frame の aux ボタン（電源ボタンの上）の 1〜5 回押しと長押しに、Frame のマイクのミュート・明るさ・パススルー・スクリーンショットなどを割り当てる。",
+      "url": "https://github.com/sasaken1102r/frame-aux-shortcuts",
       "operatingSystem": "SteamOS",
       "applicationCategory": "UtilitiesApplication",
       "license": "https://opensource.org/licenses/MIT",
@@ -605,8 +617,8 @@ footer p { margin: 4px 0; }
   <h1><span lang="ja">ささけん＠の Steam Frame アプリ</span><span lang="en">Steam Frame apps by sasaken@</span></h1>
   <p class="catch"><span lang="ja">PC なしで、Frame の中だけで手短にインストール</span><span lang="en">No PC needed — install right inside the Frame, in a few minutes.</span></p>
   <p class="lead">
-    <span lang="ja">Frame の Konsole にこのコマンドを入力して Enter。あとはメニューから、ほしいアプリの番号を選ぶだけ。1&nbsp;つだけでも、4&nbsp;つ全部でもインストールできます。</span>
-    <span lang="en">Type this command into Konsole on your Frame and press Enter. Then pick the apps you want from the menu: just one, or all four.</span>
+    <span lang="ja">Frame の Konsole にこのコマンドを入力して Enter。あとはメニューから、ほしいアプリの番号を選ぶだけ。1&nbsp;つだけでも、5&nbsp;つ全部でもインストールできます。</span>
+    <span lang="en">Type this command into Konsole on your Frame and press Enter. Then pick the apps you want from the menu: just one, or all five.</span>
   </p>
   <div class="cmd-box">
     <pre class="hero-cmd"><code>curl -fsSL https://<wbr>frame.sasaken1102s.net | sh</code></pre>
@@ -740,6 +752,9 @@ footer p { margin: 4px 0; }
   4) frame-perf-overlay   [<span class="t-dim">未インストール</span>]
      フレームレート・温度などを視界の隅に出す
 
+  5) frame-aux-shortcuts  [<span class="t-dim">未インストール</span>]
+     aux ボタンを、押し方ごとのショートカットにする
+
 やりたいことを入力して Enter を押してね
   インストール・更新   アプリの番号（例: 1　複数なら 1 3）
   全部インストール     a
@@ -764,6 +779,9 @@ footer p { margin: 4px 0; }
 
   4) frame-perf-overlay   [<span class="t-dim">not installed</span>]
      Shows frame rate, temperatures and more in a corner of the view
+
+  5) frame-aux-shortcuts  [<span class="t-dim">not installed</span>]
+     Shortcuts on the aux button, one for each way you press it
 
 Type what you want to do and press Enter
   Install / update   the app's number (e.g. 1, or 1 3 for several)
@@ -871,6 +889,16 @@ Type what you want to do and press Enter
         <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frame-perf-overlay"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
       </div>
     </article>
+
+    <article class="card app">
+      <video src="media/frame-aux-shortcuts.mp4" poster="media/frame-aux-shortcuts.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="frame-aux-shortcuts のデモ動画 / demo video"></video>
+      <div class="app-body">
+        <div class="app-head"><span class="app-num"><span lang="ja">番号 5</span><span lang="en">No. 5</span></span><h3>frame-aux-shortcuts</h3></div>
+        <p class="useful"><span class="label"><span lang="ja">こんなときに</span><span lang="en">Good for</span></span><span lang="ja">VR の中で、マイクのミュートや明るさをダッシュボードを開かずに切り替えたい</span><span lang="en">Muting the mic or changing the brightness in VR without opening the dashboard</span></p>
+        <p class="desc"><span lang="ja">本体の aux ボタン（電源ボタンの上）を、押し方ごとのショートカットにします。1〜5 回押しと長押しに、Frame のマイクのミュート・明るさ・パススルー・スクリーンショット・自分のコマンドなどを割り当てられます。</span><span lang="en">Turns the aux button (above the power button) into shortcuts: give 1 to 5 presses and a long press their own action, such as muting the Frame's mic, brightness, passthrough, a screenshot or a command of your own.</span></p>
+        <p class="more"><a class="btn" href="https://github.com/sasaken1102r/frame-aux-shortcuts"><span lang="ja">GitHub で詳しく見る</span><span lang="en">Details on GitHub</span></a></p>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -938,7 +966,7 @@ Type what you want to do and press Enter
         </ul>
       </dd>
 
-      <dt>「1〜4 の番号か、a / u / q を入力してね」と出る</dt>
+      <dt>「1〜5 の番号か、a / u / q を入力してね」と出る</dt>
       <dd>番号は半角で打ってください（全角の「１」は通りません）。いくつか選ぶときはスペースで区切ります。</dd>
 
       <dt>「root では動かしません」「これは Steam Frame（aarch64）用です」と出て止まった</dt>
@@ -974,7 +1002,7 @@ Type what you want to do and press Enter
         </ul>
       </dd>
 
-      <dt>It says “Type numbers 1-4, or a / u / q”</dt>
+      <dt>It says “Type numbers 1-5, or a / u / q”</dt>
       <dd>Type the menu numbers; separate several with spaces.</dd>
 
       <dt>It stopped with “Don't run this as root” or “This is for the Steam Frame (aarch64)”</dt>

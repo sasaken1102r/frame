@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "name": "frameeyeosc",
+      "key": "eye",
+      "mono": "Eye",
+      "desc_ja": "視線とまぶたを OSC で VRChat に送る",
+      "desc_en": "Sends eye gaze and eyelids to VRChat over OSC",
+      "unit": "frameeyeosc.service",
+      "main_file": ".local/bin/frameeyeosc",
+      "icon": "frameeyeosc-128.png",
+      "icon_sha256": "d4f6f9bff0b1fb1d6fcd8141c470ebd2c2af0f7e4a982837a4f472646c9a520b"
+    },
+    {
+      "name": "frame-jp-keyboard",
+      "key": "keyboard",
+      "mono": "Kb",
+      "desc_ja": "VR キーボードにフリック入力とかな漢字変換",
+      "desc_en": "Japanese flick input and kana-kanji conversion for the VR keyboard",
+      "unit": "frame-jp-keyboard.service",
+      "main_file": ".local/share/frame-jp-keyboard/bundle.js",
+      "icon": "frame-jp-keyboard-128.png",
+      "icon_sha256": "3c5b5f32339cefcbef5c828e06a13e3fee0dddb469634c6abc042d0439115d66"
+    },
+    {
+      "name": "frame-mic-tuner",
+      "key": "mic",
+      "mono": "Mic",
+      "desc_ja": "マイクのエコー除去・ノイズ除去を切り替える",
+      "desc_en": "Switches the mic echo cancellation and noise suppression",
+      "unit": "frame-mic-tuner.service",
+      "main_file": ".local/bin/frame-mic-tuner",
+      "icon": "frame-mic-tuner-128.png",
+      "icon_sha256": "8f14b06d0bc26cd8a01e31fe66c5b2e88b758cfb760bbc8d3dd0ce25069b4c9a"
+    },
+    {
+      "name": "frame-perf-overlay",
+      "key": "perf",
+      "mono": "Perf",
+      "desc_ja": "フレームレート・温度などを視界の隅に出す",
+      "desc_en": "Shows frame rate, temperatures and more in a corner of the view",
+      "unit": "frame-perf-overlay.service",
+      "main_file": ".local/bin/frame-perf-overlay",
+      "icon": "frame-perf-overlay-128.png",
+      "icon_sha256": "910cd676a02b54b466db980dc1b29b8164753fb2c8d04e2006f6b59f97e69975"
+    },
+    {
+      "name": "frame-aux-shortcuts",
+      "key": "aux",
+      "mono": "Aux",
+      "desc_ja": "aux ボタンを、押し方ごとのショートカットにする",
+      "desc_en": "Shortcuts on the aux button, one for each way you press it",
+      "unit": "frame-aux-shortcuts.service",
+      "main_file": ".local/bin/frame-aux-shortcuts",
+      "icon": "frame-aux-shortcuts-128.png",
+      "icon_sha256": "cc6c47f8b55200cfacaf76a5b16844f513738b2fc02cfd92cc0f07d2c5a6f062"
+    }
+  ]
+}

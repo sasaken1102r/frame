@@ -26,7 +26,7 @@
 # ---------------------------------------------------------------------------------------------
 # The apps
 
-all_apps='frameeyeosc frame-jp-keyboard frame-mic-tuner frame-perf-overlay'
+all_apps='frameeyeosc frame-jp-keyboard frame-mic-tuner frame-perf-overlay frame-aux-shortcuts'
 
 # Set the variables describing APP: repo, asset (with {version}), unit, has_purge.
 load_app() { # app
@@ -44,6 +44,7 @@ load_app() { # app
             has_purge=1
             ;;
         frame-perf-overlay) asset='frame-perf-overlay-{version}.tar.gz' ;;
+        frame-aux-shortcuts) asset='frame-aux-shortcuts-{version}.tar.gz' ;;
     esac
 }
 
@@ -54,6 +55,7 @@ app_desc() { # app
         frame-jp-keyboard) t 'VR キーボードにフリック入力とかな漢字変換' 'Japanese flick input and kana-kanji conversion for the VR keyboard' ;;
         frame-mic-tuner) t 'マイクのエコー除去・ノイズ除去を切り替える' 'Switches the mic echo cancellation and noise suppression' ;;
         frame-perf-overlay) t 'フレームレート・温度などを視界の隅に出す' 'Shows frame rate, temperatures and more in a corner of the view' ;;
+        frame-aux-shortcuts) t 'aux ボタンを、押し方ごとのショートカットにする' 'Shortcuts on the aux button, one for each way you press it' ;;
     esac
 }
 
@@ -64,6 +66,7 @@ resolve_app() { # word
         2 | frame-jp-keyboard | jp-keyboard | keyboard | kb | jp) echo frame-jp-keyboard ;;
         3 | frame-mic-tuner | mic-tuner | mic) echo frame-mic-tuner ;;
         4 | frame-perf-overlay | perf-overlay | perf) echo frame-perf-overlay ;;
+        5 | frame-aux-shortcuts | aux-shortcuts | aux) echo frame-aux-shortcuts ;;
         *) return 1 ;;
     esac
 }
@@ -75,6 +78,7 @@ app_number() { # app
         frame-jp-keyboard) echo 2 ;;
         frame-mic-tuner) echo 3 ;;
         frame-perf-overlay) echo 4 ;;
+        frame-aux-shortcuts) echo 5 ;;
     esac
 }
 
@@ -208,7 +212,8 @@ usage() {
   ... | sh -s -- uninstall <アプリ>...   アンインストール（削除）
 
 アプリ: frameeyeosc (eye)、frame-jp-keyboard (keyboard)、
-        frame-mic-tuner (mic)、frame-perf-overlay (perf)、all
+        frame-mic-tuner (mic)、frame-perf-overlay (perf)、
+        frame-aux-shortcuts (aux)、all
   --yes, -y      質問にはすべて既定の答えで進む
   --lang ja|en   表示の言語
   --help, -h     これを出す
@@ -224,7 +229,8 @@ Steam Frame apps by sasaken@ (installer)
   ... | sh -s -- uninstall <app>...   uninstall
 
 Apps: frameeyeosc (eye), frame-jp-keyboard (keyboard),
-      frame-mic-tuner (mic), frame-perf-overlay (perf), all
+      frame-mic-tuner (mic), frame-perf-overlay (perf),
+      frame-aux-shortcuts (aux), all
   --yes, -y      take the default answer for every question
   --lang ja|en   language of the messages
   --help, -h     show this
@@ -584,6 +590,18 @@ plan_install() { # app
                 _opts=--no-autostart
             fi
             ;;
+        frame-aux-shortcuts)
+            # As for frame-perf-overlay: as it is now (the panel's switch may have changed it), else install-args
+            _def=y
+            if [ -f "$unit_dir/$unit" ]; then
+                systemctl --user is-enabled --quiet "$unit" 2>/dev/null || _def=n
+            elif args_file_has frame-aux-shortcuts --no-autostart; then
+                _def=n
+            fi
+            if ! ask_yn "$(t '  SteamVR と一緒に起動する？' '  Start it together with SteamVR?')" "$_def"; then
+                _opts=--no-autostart
+            fi
+            ;;
     esac
     eval "plan_$_n=\$_opts; ver_$_n=\$version; tag_$_n=\$tag"
     eval "had_$_n=0"
@@ -689,6 +707,8 @@ uninstall_apps() { # apps...
                     "frame-mic-tuner: restart the headset while not playing to get Valve's original mic behaviour back")" ;;
                 frame-perf-overlay) add_note "$(t "frame-perf-overlay: 設定は $config_home/frame-perf-overlay に残してある（要らなければ消してOK）" \
                     "frame-perf-overlay: its settings stay in $config_home/frame-perf-overlay (delete it if you like)")" ;;
+                frame-aux-shortcuts) add_note "$(t "frame-aux-shortcuts: 設定は $config_home/frame-aux-shortcuts に残してある（要らなければ消してOK）" \
+                    "frame-aux-shortcuts: its settings stay in $config_home/frame-aux-shortcuts (delete it if you like)")" ;;
             esac
         fi
         rm -rf "${work:?}/$_a"

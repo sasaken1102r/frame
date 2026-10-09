@@ -1,6 +1,6 @@
 # ささけん＠の Steam Frame アプリ
 
-PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の自作アプリ 4 つを、Frame の Konsole にコマンドを入力して、メニューから選んでインストール・更新・アンインストール（削除）するためのスクリプトです。1 つだけでも、4 つ全部でも入れられます。
+PC なしで、Frame の中だけで手短にインストール。Steam Frame 用の自作アプリ 5 つを、Frame の Konsole にコマンドを入力して、メニューから選んでインストール・更新・アンインストール（削除）するためのスクリプトです。1 つだけでも、5 つ全部でも入れられます。
 
 [English below](#english)
 
@@ -20,6 +20,7 @@ curl -fsSL https://frame.sasaken1102s.net | sh
 | [frame-jp-keyboard](https://github.com/sasaken1102r/frame-jp-keyboard) | VR キーボードにフリック入力とかな漢字変換 |
 | [frame-mic-tuner](https://github.com/sasaken1102r/frame-mic-tuner) | マイクのエコー除去・ノイズ除去を切り替える |
 | [frame-perf-overlay](https://github.com/sasaken1102r/frame-perf-overlay) | フレームレート・温度などを視界の隅に出す |
+| [frame-aux-shortcuts](https://github.com/sasaken1102r/frame-aux-shortcuts) | aux ボタンを、押し方ごとのショートカットにする |
 
 使う前に、各アプリの README（必要なもの・注意）を読んでください。
 
@@ -44,7 +45,7 @@ curl -fsSL https://frame.sasaken1102s.net | sh -s -- install all --yes
 curl -fsSL https://frame.sasaken1102s.net | sh -s -- uninstall perf
 ```
 
-- アプリ名は短く `eye` `keyboard` `mic` `perf` でも、`all` で全部
+- アプリ名は短く `eye` `keyboard` `mic` `perf` `aux` でも、`all` で全部
 - `--yes` 質問にはすべて既定の答えで進む（ターミナルが無いときも同じ）
 - `--lang ja|en` 表示の言語（既定はロケール、無ければ Steam の言語設定）
 - `--help` 使い方
@@ -59,7 +60,7 @@ MIT。[LICENSE](LICENSE) を参照してください。非公式のツールで�
 
 ## English
 
-Steam Frame apps by sasaken@ — no PC needed: install right inside the Frame, in a few minutes. Install, update or uninstall the four apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay) by typing a command into the headset's Konsole and picking from the menu (one app or all four):
+Steam Frame apps by sasaken@ — no PC needed: install right inside the Frame, in a few minutes. Install, update or uninstall the five apps (frameeyeosc, frame-jp-keyboard, frame-mic-tuner, frame-perf-overlay, frame-aux-shortcuts) by typing a command into the headset's Konsole and picking from the menu (one app or all five):
 
 ```sh
 curl -fsSL https://frame.sasaken1102s.net | sh

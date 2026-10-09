@@ -21,3 +21,7 @@
 # OG 画像はファイル名に日付が入っていて中身を変えないので、長くキャッシュしてよい
 /og_*.png
   Cache-Control: public, max-age=31536000, immutable
+
+/apps/*
+  Cache-Control: max-age=3600
+  X-Content-Type-Options: nosniff
