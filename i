@@ -763,7 +763,8 @@ menu() {
             install_apps $_picked
             return
         fi
-        say "1〜4 の番号か、a / u / q を入力してね" "Type numbers 1-4, or a / u / q"
+        _last=$(app_number "${all_apps##* }")
+        say "1〜$_last の番号か、a / u / q を入力してね" "Type numbers 1-$_last, or a / u / q"
     done
 }
 
@@ -771,7 +772,11 @@ menu() {
 pick_apps() { # words...
     _p=
     for _w in "$@"; do
-        case $_w in [1-4]) ;; *) return 1 ;; esac
+        _found=
+        for _a in $all_apps; do
+            [ "$(app_number "$_a")" = "$_w" ] && _found=1
+        done
+        [ -n "$_found" ] || return 1
         _p="$_p $_w"
     done
     for _a in $all_apps; do
