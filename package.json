@@ -5,6 +5,8 @@
   "version": "0.0.1",
   "scripts": {
     "build": "node scripts/build.js",
+    "test": "sh tests/installer_test.sh",
+    "predeploy": "npm test",
     "deploy": "node scripts/build.js && wrangler pages deploy dist --project-name=frame-sasaken1102s --branch=main",
     "dev": "node scripts/build.js && wrangler pages dev dist"
   },

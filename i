@@ -21,7 +21,8 @@
 #
 # Test overrides (environment): FRAME_INSTALLER_DRY_RUN=1 (do everything except running install.sh,
 # print its command instead), FRAME_INSTALLER_GITHUB (default https://github.com),
-# FRAME_INSTALLER_ALLOW_INSECURE=1 (allow http:// and any host).
+# FRAME_INSTALLER_ALLOW_INSECURE=1 (allow http:// and any host), FRAME_INSTALLER_TEST_TTY=FILE (read
+# the answers from FILE, one per line, instead of /dev/tty; for tests/installer_test.sh).
 
 # ---------------------------------------------------------------------------------------------
 # The apps
@@ -152,7 +153,13 @@ die() { # ja en
 # Read one line from the terminal into $reply. Fails at end of input.
 read_tty() { # prompt
     printf '%s' "$1"
-    IFS= read -r reply </dev/tty || return 1
+    if [ -n "$test_tty" ]; then
+        IFS= read -r reply <&3 || return 1
+        printf '%s
+' "$reply"
+    else
+        IFS= read -r reply </dev/tty || return 1
+    fi
     reply=$(printf '%s' "$reply" | tr -d '\r')
 }
 
@@ -950,7 +957,14 @@ main() {
 
     # Questions need a terminal; `| sh` leaves stdin to the script, so they are read from /dev/tty
     has_tty=0
-    (: </dev/tty) 2>/dev/null && has_tty=1
+    test_tty=${FRAME_INSTALLER_TEST_TTY:-}
+    if [ -n "$test_tty" ]; then
+        # Tests: answers from a file, kept open on fd 3 so each read takes the next line
+        exec 3<"$test_tty" || die "$test_tty を読めません" "Cannot read $test_tty"
+        has_tty=1
+    else
+        (: </dev/tty) 2>/dev/null && has_tty=1
+    fi
     interactive=0
     [ "$has_tty" = 1 ] && [ "$yes" != 1 ] && interactive=1
     if [ -z "$cmd" ] && [ "$has_tty" != 1 ]; then
