@@ -155,8 +155,7 @@ read_tty() { # prompt
     printf '%s' "$1"
     if [ -n "$test_tty" ]; then
         IFS= read -r reply <&3 || return 1
-        printf '%s
-' "$reply"
+        printf '%s\n' "$reply"
     else
         IFS= read -r reply </dev/tty || return 1
     fi
